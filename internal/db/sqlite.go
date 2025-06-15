@@ -29,8 +29,8 @@ const (
 	CheckpointSizeMB   = 50   // MB
 
 	// Encryption settings
-	EncryptionKeySize   = 32    // AES-256 key size
-	EncryptionNonceSize = 12    // GCM nonce size
+	EncryptionKeySize   = 32     // AES-256 key size
+	EncryptionNonceSize = 12     // GCM nonce size
 	PBKDF2Iterations    = 100000 // PBKDF2 iterations for key derivation
 )
 
@@ -60,29 +60,29 @@ func NewSQLiteDB(dataDir string, password string, logger *logrus.Logger) (*SQLit
 	encryptionKey := deriveEncryptionKey(password)
 
 	dbPath := filepath.Join(dataDir, DatabaseName)
-	
+
 	// Open database with WAL mode and optimizations
-	dsn := fmt.Sprintf("%s?_journal_mode=%s&_synchronous=NORMAL&_cache_size=10000&_temp_store=memory", 
+	dsn := fmt.Sprintf("%s?_journal_mode=%s&_synchronous=NORMAL&_cache_size=10000&_temp_store=memory",
 		dbPath, WALMode)
-	
+
 	db, err := sql.Open("sqlite3", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
-	
+
 	// Configure connection pool
-	db.SetMaxOpenConns(1)  // SQLite works best with single connection
+	db.SetMaxOpenConns(1) // SQLite works best with single connection
 	db.SetMaxIdleConns(1)
 	db.SetConnMaxLifetime(time.Hour)
-	
+
 	sqliteDB := &SQLiteDB{
-		db:            db,
-		logger:        logger,
-		dbPath:        dbPath,
-		encryptionKey: encryptionKey,
+		db:             db,
+		logger:         logger,
+		dbPath:         dbPath,
+		encryptionKey:  encryptionKey,
 		lastCheckpoint: time.Now(),
 	}
-	
+
 	// Initialize database schema
 	if err := sqliteDB.initSchema(); err != nil {
 		if closeErr := db.Close(); closeErr != nil {
@@ -90,7 +90,7 @@ func NewSQLiteDB(dataDir string, password string, logger *logrus.Logger) (*SQLit
 		}
 		return nil, fmt.Errorf("failed to initialize schema: %w", err)
 	}
-	
+
 	// Start WAL checkpoint routine
 	go sqliteDB.walCheckpointRoutine()
 
@@ -347,12 +347,12 @@ func (db *SQLiteDB) initSchema() error {
 			UPDATE groups SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
 		END;
 	`
-	
+
 	_, err := db.db.Exec(schema)
 	if err != nil {
 		return fmt.Errorf("failed to create schema: %w", err)
 	}
-	
+
 	db.logger.Info("Database schema initialized successfully")
 	return nil
 }
@@ -364,7 +364,7 @@ func (db *SQLiteDB) SaveUser(profile *user.UserProfile) error {
 		(did, public_key, display_name, trust_level, reputation, last_seen, is_blocked, contacts_since)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 	`
-	
+
 	_, err := db.db.Exec(query,
 		profile.MessengerID.GetDID(),
 		profile.MessengerID.GetPublicKeyHex(),
@@ -375,11 +375,11 @@ func (db *SQLiteDB) SaveUser(profile *user.UserProfile) error {
 		profile.IsBlocked,
 		profile.ContactsSince,
 	)
-	
+
 	if err != nil {
 		return fmt.Errorf("failed to save user: %w", err)
 	}
-	
+
 	db.incrementTransactionCount()
 	return nil
 }
@@ -391,13 +391,13 @@ func (db *SQLiteDB) LoadUser(did string) (*user.UserProfile, error) {
 		       last_seen, is_blocked, contacts_since
 		FROM users WHERE did = ?
 	`
-	
+
 	row := db.db.QueryRow(query, did)
-	
+
 	var profile user.UserProfile
 	var publicKeyHex string
 	var trustLevel int
-	
+
 	err := row.Scan(
 		&did,
 		&publicKeyHex,
@@ -408,19 +408,19 @@ func (db *SQLiteDB) LoadUser(did string) (*user.UserProfile, error) {
 		&profile.IsBlocked,
 		&profile.ContactsSince,
 	)
-	
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("user not found: %s", did)
 		}
 		return nil, fmt.Errorf("failed to load user: %w", err)
 	}
-	
+
 	profile.TrustLevel = user.TrustLevel(trustLevel)
-	
+
 	// TODO: Reconstruct MessengerID from stored data
 	// This would require storing and loading the full identity
-	
+
 	return &profile, nil
 }
 
@@ -686,7 +686,7 @@ func (db *SQLiteDB) checkpoint() error {
 	if err != nil {
 		return fmt.Errorf("failed to checkpoint WAL: %w", err)
 	}
-	
+
 	db.logger.Debug("WAL checkpoint completed")
 	return nil
 }
@@ -694,19 +694,19 @@ func (db *SQLiteDB) checkpoint() error {
 // GetStats returns database statistics
 func (db *SQLiteDB) GetStats() map[string]interface{} {
 	stats := make(map[string]interface{})
-	
+
 	// Get database size
 	if info, err := os.Stat(db.dbPath); err == nil {
 		stats["db_size_bytes"] = info.Size()
 	}
-	
+
 	// Get WAL file size
 	walPath := db.dbPath + "-wal"
 	if info, err := os.Stat(walPath); err == nil {
 		stats["wal_size_bytes"] = info.Size()
 	}
-	
+
 	stats["transaction_count"] = db.transactionCount
-	
+
 	return stats
 }

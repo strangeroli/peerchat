@@ -447,8 +447,6 @@ func (mm *MessageManager) verifyMessage(msg *Message) bool {
 	return true // Placeholder
 }
 
-
-
 // SendFile initiates a file transfer to a peer
 func (mm *MessageManager) SendFile(peerID peer.ID, filePath string) error {
 	mm.logger.WithFields(logrus.Fields{

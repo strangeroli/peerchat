@@ -14,14 +14,14 @@ import (
 
 	"github.com/Xelvra/peerchat/internal/message"
 	"github.com/Xelvra/peerchat/internal/user"
-	"github.com/libp2p/go-libp2p"
+	libp2p "github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
-	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	libp2pquic "github.com/libp2p/go-libp2p/p2p/transport/quic"
+	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/sirupsen/logrus"
 )
 
@@ -37,53 +37,53 @@ const (
 
 // NetworkTransport represents active network transport information
 type NetworkTransport struct {
-	Type        string `json:"type"`         // "tcp", "quic", "relay"
-	LocalAddr   string `json:"local_addr"`
-	RemoteAddr  string `json:"remote_addr,omitempty"`
-	IsActive    bool   `json:"is_active"`
-	Latency     int    `json:"latency_ms,omitempty"`
-	PacketLoss  float64 `json:"packet_loss,omitempty"`
+	Type       string  `json:"type"` // "tcp", "quic", "relay"
+	LocalAddr  string  `json:"local_addr"`
+	RemoteAddr string  `json:"remote_addr,omitempty"`
+	IsActive   bool    `json:"is_active"`
+	Latency    int     `json:"latency_ms,omitempty"`
+	PacketLoss float64 `json:"packet_loss,omitempty"`
 }
 
 // NATInfo represents NAT traversal information
 type NATInfo struct {
-	Type           string   `json:"type"`            // "none", "full_cone", "restricted", "port_restricted", "symmetric"
-	PublicIP       string   `json:"public_ip"`
-	PublicPort     int      `json:"public_port"`
-	LocalIP        string   `json:"local_ip"`
-	LocalPort      int      `json:"local_port"`
-	STUNServers    []string `json:"stun_servers"`
-	UsingRelay     bool     `json:"using_relay"`
-	RelayAddr      string   `json:"relay_addr,omitempty"`
+	Type        string   `json:"type"` // "none", "full_cone", "restricted", "port_restricted", "symmetric"
+	PublicIP    string   `json:"public_ip"`
+	PublicPort  int      `json:"public_port"`
+	LocalIP     string   `json:"local_ip"`
+	LocalPort   int      `json:"local_port"`
+	STUNServers []string `json:"stun_servers"`
+	UsingRelay  bool     `json:"using_relay"`
+	RelayAddr   string   `json:"relay_addr,omitempty"`
 }
 
 // DiscoveryStatus represents peer discovery status
 type DiscoveryStatus struct {
-	MDNSActive     bool     `json:"mdns_active"`
-	DHTActive      bool     `json:"dht_active"`
-	UDPBroadcast   bool     `json:"udp_broadcast"`
-	BootstrapPeers []string `json:"bootstrap_peers"`
-	KnownPeers     int      `json:"known_peers"`
+	MDNSActive     bool      `json:"mdns_active"`
+	DHTActive      bool      `json:"dht_active"`
+	UDPBroadcast   bool      `json:"udp_broadcast"`
+	BootstrapPeers []string  `json:"bootstrap_peers"`
+	KnownPeers     int       `json:"known_peers"`
 	LastDiscovery  time.Time `json:"last_discovery"`
 }
 
 // NodeStatus represents the current status of a running node
 type NodeStatus struct {
-	PeerID            string            `json:"peer_id"`
-	ListenAddrs       []string          `json:"listen_addrs"`
-	ConnectedPeers    int               `json:"connected_peers"`
-	UptimeSeconds     float64           `json:"uptime_seconds"`
-	MessagesProcessed int64             `json:"messages_processed"`
-	StartTime         time.Time         `json:"start_time"`
-	LastUpdate        time.Time         `json:"last_update"`
-	ProcessID         int               `json:"process_id"`
-	IsRunning         bool              `json:"is_running"`
+	PeerID            string    `json:"peer_id"`
+	ListenAddrs       []string  `json:"listen_addrs"`
+	ConnectedPeers    int       `json:"connected_peers"`
+	UptimeSeconds     float64   `json:"uptime_seconds"`
+	MessagesProcessed int64     `json:"messages_processed"`
+	StartTime         time.Time `json:"start_time"`
+	LastUpdate        time.Time `json:"last_update"`
+	ProcessID         int       `json:"process_id"`
+	IsRunning         bool      `json:"is_running"`
 
 	// Extended network information
-	Transports      []NetworkTransport `json:"transports"`
-	NATInfo         *NATInfo           `json:"nat_info,omitempty"`
-	Discovery       *DiscoveryStatus   `json:"discovery,omitempty"`
-	NetworkQuality  string             `json:"network_quality"` // "excellent", "good", "poor", "offline"
+	Transports     []NetworkTransport `json:"transports"`
+	NATInfo        *NATInfo           `json:"nat_info,omitempty"`
+	Discovery      *DiscoveryStatus   `json:"discovery,omitempty"`
+	NetworkQuality string             `json:"network_quality"` // "excellent", "good", "poor", "offline"
 }
 
 // PeerChatNode represents the main P2P node for Xelvra messenger
@@ -652,10 +652,10 @@ func (w *logrusWriter) Write(p []byte) (n int, err error) {
 	if logLine != "" {
 		// Check if it's a QUIC-related log
 		if strings.Contains(logLine, "quic") ||
-		   strings.Contains(logLine, "UDP") ||
-		   strings.Contains(logLine, "buffer size") ||
-		   strings.Contains(logLine, "receive buffer") ||
-		   strings.Contains(logLine, "failed to sufficiently increase") {
+			strings.Contains(logLine, "UDP") ||
+			strings.Contains(logLine, "buffer size") ||
+			strings.Contains(logLine, "receive buffer") ||
+			strings.Contains(logLine, "failed to sufficiently increase") {
 			// Log QUIC messages as debug level to reduce console noise
 			w.logger.Debug("QUIC: " + logLine)
 		} else {

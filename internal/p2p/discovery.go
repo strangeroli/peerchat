@@ -10,30 +10,30 @@ import (
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/p2p/discovery/mdns"
-	"github.com/multiformats/go-multiaddr"
+	multiaddr "github.com/multiformats/go-multiaddr"
 	"github.com/sirupsen/logrus"
 )
 
 // DiscoveryManager handles peer discovery using multiple methods
 type DiscoveryManager struct {
-	host     host.Host
-	logger   *logrus.Logger
-	ctx      context.Context
-	cancel   context.CancelFunc
-	
+	host   host.Host
+	logger *logrus.Logger
+	ctx    context.Context
+	cancel context.CancelFunc
+
 	// Discovery methods
 	mdnsService mdns.Service
-	
+
 	// Status tracking
-	mu             sync.RWMutex
+	mu              sync.RWMutex
 	discoveredPeers map[peer.ID]*peer.AddrInfo
-	status         *DiscoveryStatus
+	status          *DiscoveryStatus
 }
 
 // NewDiscoveryManager creates a new discovery manager
 func NewDiscoveryManager(h host.Host, logger *logrus.Logger) *DiscoveryManager {
 	ctx, cancel := context.WithCancel(context.Background())
-	
+
 	return &DiscoveryManager{
 		host:            h,
 		logger:          logger,
@@ -81,21 +81,21 @@ func (dm *DiscoveryManager) Start() error {
 // Stop stops peer discovery
 func (dm *DiscoveryManager) Stop() error {
 	dm.logger.Info("Stopping peer discovery...")
-	
+
 	dm.cancel()
-	
+
 	if dm.mdnsService != nil {
 		if err := dm.mdnsService.Close(); err != nil {
 			dm.logger.WithError(err).Warn("Failed to close mDNS service")
 		}
 	}
-	
+
 	dm.mu.Lock()
 	dm.status.MDNSActive = false
 	dm.status.DHTActive = false
 	dm.status.UDPBroadcast = false
 	dm.mu.Unlock()
-	
+
 	dm.logger.Info("Peer discovery stopped")
 	return nil
 }
@@ -104,10 +104,10 @@ func (dm *DiscoveryManager) Stop() error {
 func (dm *DiscoveryManager) GetStatus() *DiscoveryStatus {
 	dm.mu.RLock()
 	defer dm.mu.RUnlock()
-	
+
 	// Update known peers count
 	dm.status.KnownPeers = len(dm.discoveredPeers)
-	
+
 	// Copy status to avoid race conditions
 	status := *dm.status
 	return &status
@@ -157,14 +157,14 @@ func (dm *DiscoveryManager) startMDNS() error {
 // startUDPBroadcast starts UDP broadcast discovery for local network
 func (dm *DiscoveryManager) startUDPBroadcast() {
 	dm.logger.Info("Starting UDP broadcast discovery...")
-	
+
 	// Listen for broadcasts
 	go dm.listenUDPBroadcast()
-	
+
 	// Send periodic broadcasts
 	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
-	
+
 	for {
 		select {
 		case <-dm.ctx.Done():
@@ -182,7 +182,7 @@ func (dm *DiscoveryManager) listenUDPBroadcast() {
 		dm.logger.WithError(err).Error("Failed to resolve UDP broadcast address")
 		return
 	}
-	
+
 	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
 		dm.logger.WithError(err).Error("Failed to listen on UDP broadcast")
@@ -193,9 +193,9 @@ func (dm *DiscoveryManager) listenUDPBroadcast() {
 			dm.logger.WithError(err).Error("Failed to close UDP connection")
 		}
 	}()
-	
+
 	dm.logger.Info("Listening for UDP broadcasts on :42424")
-	
+
 	buffer := make([]byte, 1024)
 	for {
 		select {
@@ -214,7 +214,7 @@ func (dm *DiscoveryManager) listenUDPBroadcast() {
 				dm.logger.WithError(err).Debug("UDP broadcast read error")
 				continue
 			}
-			
+
 			dm.handleUDPBroadcast(buffer[:n], remoteAddr)
 		}
 	}
@@ -242,9 +242,9 @@ func (dm *DiscoveryManager) sendUDPBroadcast() {
 	}
 
 	dm.logger.WithFields(logrus.Fields{
-		"message":   message,
-		"target":    "255.255.255.255:42424",
-		"peer_id":   dm.host.ID().String(),
+		"message": message,
+		"target":  "255.255.255.255:42424",
+		"peer_id": dm.host.ID().String(),
 	}).Info("Sent UDP broadcast for peer discovery")
 }
 
@@ -254,24 +254,24 @@ func (dm *DiscoveryManager) handleUDPBroadcast(data []byte, remoteAddr *net.UDPA
 	if len(message) < 12 || message[:12] != "XELVRA_PEER:" {
 		return
 	}
-	
+
 	peerIDStr := message[12:]
 	peerID, err := peer.Decode(peerIDStr)
 	if err != nil {
 		dm.logger.WithError(err).Debug("Invalid peer ID in UDP broadcast")
 		return
 	}
-	
+
 	// Don't discover ourselves
 	if peerID == dm.host.ID() {
 		return
 	}
-	
+
 	dm.logger.WithFields(logrus.Fields{
 		"peer_id":     peerID.String(),
 		"remote_addr": remoteAddr.String(),
 	}).Info("Discovered peer via UDP broadcast")
-	
+
 	// Create basic peer info (UDP broadcast doesn't provide addresses)
 	peerInfo := &peer.AddrInfo{
 		ID:    peerID,
@@ -294,16 +294,16 @@ func (n *discoveryNotifee) HandlePeerFound(pi peer.AddrInfo) {
 		"peer_id": pi.ID.String(),
 		"addrs":   pi.Addrs,
 	}).Info("Discovered peer via mDNS")
-	
+
 	n.dm.mu.Lock()
 	n.dm.discoveredPeers[pi.ID] = &pi
 	n.dm.status.LastDiscovery = time.Now()
 	n.dm.mu.Unlock()
-	
+
 	// Try to connect to the discovered peer
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	if err := n.dm.host.Connect(ctx, pi); err != nil {
 		n.dm.logger.WithError(err).WithField("peer_id", pi.ID.String()).Debug("Failed to connect to discovered peer")
 	} else {

@@ -53,7 +53,7 @@ func (s *STUNClient) DiscoverNAT(ctx context.Context, localPort int) (*NATInfo, 
 	// Try each STUN server
 	for _, server := range s.servers {
 		s.logger.WithField("server", server).Debug("Trying STUN server")
-		
+
 		publicIP, publicPort, natType, err := s.querySTUNServer(ctx, server, localPort)
 		if err != nil {
 			s.logger.WithError(err).WithField("server", server).Debug("STUN query failed")

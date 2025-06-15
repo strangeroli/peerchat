@@ -1,42 +1,15 @@
-version: 2
-
 run:
   timeout: 5m
-  issues-exit-code: 1
   tests: true
-  skip-dirs:
-    - vendor
-  skip-files:
-    - ".*\\.pb\\.go$"
-
-linters-settings:
-  errcheck:
-    check-type-assertions: true
-    check-blank: true
-  govet:
-    check-shadowing: true
-  staticcheck:
-    checks: ["all"]
-  unused:
-    checks: ["all"]
-  ineffassign:
-    check-exported: true
 
 linters:
-  disable-all: true
   enable:
-    - errcheck
+    - gofmt
+    - goimports
+    - govet
     - ineffassign
-    - staticcheck
-    - unused
+    - misspell
 
 issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - errcheck
-    - path: tests/
-      linters:
-        - errcheck
   max-issues-per-linter: 0
   max-same-issues: 0

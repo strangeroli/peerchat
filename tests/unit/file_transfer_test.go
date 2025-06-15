@@ -18,7 +18,7 @@ func TestFileMetadataCreation(t *testing.T) {
 	tempDir := t.TempDir()
 	testFile := filepath.Join(tempDir, "test.txt")
 	testContent := "Hello, this is a test file for transfer!"
-	
+
 	err := os.WriteFile(testFile, []byte(testContent), 0644)
 	require.NoError(t, err)
 
@@ -42,7 +42,7 @@ func TestFileHashCalculation(t *testing.T) {
 	tempDir := t.TempDir()
 	testFile := filepath.Join(tempDir, "hash_test.txt")
 	testContent := "Test content for hash calculation"
-	
+
 	err := os.WriteFile(testFile, []byte(testContent), 0644)
 	require.NoError(t, err)
 
@@ -86,7 +86,7 @@ func TestMimeTypeDetection(t *testing.T) {
 		t.Run(test.filename, func(t *testing.T) {
 			tempDir := t.TempDir()
 			testFile := filepath.Join(tempDir, test.filename)
-			
+
 			err := os.WriteFile(testFile, []byte("test content"), 0644)
 			require.NoError(t, err)
 
@@ -183,15 +183,15 @@ func TestFileTransferProgressUpdate(t *testing.T) {
 
 	// Test outgoing transfer progress
 	outgoing := message.NewFileTransfer("test-out", peerID, metadata, true, logger)
-	
+
 	// Initial progress should be 0
 	assert.Equal(t, 0.0, outgoing.Progress)
-	
+
 	// Simulate sending 500 bytes
 	outgoing.BytesSent = 500
 	outgoing.UpdateProgress()
 	assert.Equal(t, 0.5, outgoing.Progress)
-	
+
 	// Simulate sending all bytes
 	outgoing.BytesSent = 1000
 	outgoing.UpdateProgress()
@@ -199,12 +199,12 @@ func TestFileTransferProgressUpdate(t *testing.T) {
 
 	// Test incoming transfer progress
 	incoming := message.NewFileTransfer("test-in", peerID, metadata, false, logger)
-	
+
 	// Simulate receiving 250 bytes
 	incoming.BytesReceived = 250
 	incoming.UpdateProgress()
 	assert.Equal(t, 0.25, incoming.Progress)
-	
+
 	// Simulate receiving all bytes
 	incoming.BytesReceived = 1000
 	incoming.UpdateProgress()
@@ -213,7 +213,7 @@ func TestFileTransferProgressUpdate(t *testing.T) {
 
 func TestFileTransferConstants(t *testing.T) {
 	// Verify file transfer constants are reasonable
-	assert.Equal(t, 32*1024, message.FileChunkSize) // 32KB chunks
-	assert.Equal(t, 1024, message.FileHeaderSize)   // 1KB header limit
+	assert.Equal(t, 32*1024, message.FileChunkSize)                        // 32KB chunks
+	assert.Equal(t, 1024, message.FileHeaderSize)                          // 1KB header limit
 	assert.Equal(t, uint32(0x58454C56), uint32(message.FileTransferMagic)) // "XELV" magic
 }

@@ -60,7 +60,7 @@ func TestCLIStatus(t *testing.T) {
 func TestCLIDoctor(t *testing.T) {
 	cmd := exec.Command("timeout", "5", "../../bin/peerchat-cli", "doctor")
 	output, err := cmd.Output()
-	
+
 	// timeout command returns exit code 124 on timeout, which is expected
 	if err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
@@ -82,7 +82,7 @@ func TestCLIDoctor(t *testing.T) {
 func TestCLIDiscover(t *testing.T) {
 	cmd := exec.Command("timeout", "5", "../../bin/peerchat-cli", "discover")
 	output, err := cmd.Output()
-	
+
 	// timeout command returns exit code 124 on timeout, which is expected
 	if err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
@@ -146,7 +146,7 @@ func TestCLILogRotation(t *testing.T) {
 // TestCLIBinaryExists tests that the binary exists and is executable
 func TestCLIBinaryExists(t *testing.T) {
 	binaryPath := "../../bin/peerchat-cli"
-	
+
 	// Check if binary exists
 	if _, err := os.Stat(binaryPath); os.IsNotExist(err) {
 		t.Fatalf("CLI binary does not exist at %s", binaryPath)

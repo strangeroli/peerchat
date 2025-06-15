@@ -115,7 +115,7 @@ func (w *P2PWrapper) GetNodeInfo() *NodeInfo {
 			IsRunning:   true,
 		}
 	}
-	
+
 	if w.realNode == nil {
 		return &NodeInfo{
 			IsRunning: false,

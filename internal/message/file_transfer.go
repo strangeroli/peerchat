@@ -18,8 +18,8 @@ import (
 
 const (
 	// File transfer protocol constants
-	FileChunkSize     = 32 * 1024 // 32KB chunks for optimal performance
-	FileHeaderSize    = 1024      // Maximum size for file metadata header
+	FileChunkSize     = 32 * 1024  // 32KB chunks for optimal performance
+	FileHeaderSize    = 1024       // Maximum size for file metadata header
 	FileTransferMagic = 0x58454C56 // "XELV" magic number for file transfers
 )
 
@@ -54,14 +54,14 @@ func (fts FileTransferStatus) String() string {
 
 // FileMetadata contains information about a file being transferred
 type FileMetadata struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	Size        int64     `json:"size"`
-	Hash        string    `json:"hash"`        // SHA256 hash for integrity verification
-	MimeType    string    `json:"mime_type"`
-	Timestamp   time.Time `json:"timestamp"`
-	ChunkCount  int       `json:"chunk_count"`
-	ChunkSize   int       `json:"chunk_size"`
+	ID         string    `json:"id"`
+	Name       string    `json:"name"`
+	Size       int64     `json:"size"`
+	Hash       string    `json:"hash"` // SHA256 hash for integrity verification
+	MimeType   string    `json:"mime_type"`
+	Timestamp  time.Time `json:"timestamp"`
+	ChunkCount int       `json:"chunk_count"`
+	ChunkSize  int       `json:"chunk_size"`
 }
 
 // FileTransferRequest represents a file transfer request
@@ -76,23 +76,23 @@ type FileTransferRequest struct {
 
 // FileTransfer represents an active file transfer session
 type FileTransfer struct {
-	ID           string
-	PeerID       peer.ID
-	Metadata     FileMetadata
-	Status       FileTransferStatus
-	Progress     float64 // 0.0 to 1.0
-	BytesTotal   int64
-	BytesSent    int64
+	ID            string
+	PeerID        peer.ID
+	Metadata      FileMetadata
+	Status        FileTransferStatus
+	Progress      float64 // 0.0 to 1.0
+	BytesTotal    int64
+	BytesSent     int64
 	BytesReceived int64
-	StartTime    time.Time
-	EndTime      time.Time
-	Error        error
-	
+	StartTime     time.Time
+	EndTime       time.Time
+	Error         error
+
 	// File handling
-	file         *os.File
-	isOutgoing   bool
-	chunks       map[int]bool // Track received chunks
-	logger       *logrus.Logger
+	file       *os.File
+	isOutgoing bool
+	chunks     map[int]bool // Track received chunks
+	logger     *logrus.Logger
 }
 
 // NewFileTransfer creates a new file transfer session
