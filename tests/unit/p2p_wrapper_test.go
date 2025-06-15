@@ -165,7 +165,11 @@ func TestP2PWrapper_SimulationDelay(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to start wrapper: %v", err)
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			t.Logf("Warning: Failed to stop wrapper: %v", err)
+		}
+	}()
 
 	// Simulation should have some delay but not too much
 	if duration < 100*time.Millisecond {
@@ -201,7 +205,11 @@ func TestP2PWrapper_LoggingToFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to start wrapper: %v", err)
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			t.Logf("Warning: Failed to stop wrapper: %v", err)
+		}
+	}()
 
 	// Check if log file exists
 	home, err := os.UserHomeDir()
@@ -223,7 +231,11 @@ func TestP2PWrapper_NodeInfoConsistency(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to start wrapper: %v", err)
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			t.Logf("Warning: Failed to stop wrapper: %v", err)
+		}
+	}()
 
 	// Get node info multiple times and verify consistency
 	info1 := wrapper.GetNodeInfo()

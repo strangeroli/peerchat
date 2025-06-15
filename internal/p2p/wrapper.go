@@ -357,12 +357,8 @@ func rotateLogIfNeeded(logFile string) error {
 	const maxSizeBytes = 5 * 1024 * 1024 // 5MB
 	const maxLines = 10000               // 10,000 lines
 
-	needsRotation := false
-
 	// Check file size
-	if info.Size() > maxSizeBytes {
-		needsRotation = true
-	}
+	needsRotation := info.Size() > maxSizeBytes
 
 	// Check line count if size check didn't trigger rotation
 	if !needsRotation {
@@ -386,7 +382,12 @@ func countLines(filename string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			// Log error but don't fail the function - line counting can continue
+			_ = err // Explicitly ignore error
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
 	lineCount := 0
@@ -404,7 +405,10 @@ func performLogRotation(logFile string) error {
 	// Remove oldest backup if it exists
 	oldestBackup := logFile + "." + strconv.Itoa(maxBackups)
 	if _, err := os.Stat(oldestBackup); err == nil {
-		os.Remove(oldestBackup)
+		if err := os.Remove(oldestBackup); err != nil {
+			// Log error but continue with rotation - backup cleanup is not critical
+			_ = err // Explicitly ignore error
+		}
 	}
 
 	// Shift existing backups

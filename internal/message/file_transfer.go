@@ -117,7 +117,12 @@ func CalculateFileHash(filePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to open file: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			// Log error but don't fail the function - file hash calculation can continue
+			_ = err // Explicitly ignore error
+		}
+	}()
 
 	hash := sha256.New()
 	if _, err := io.Copy(hash, file); err != nil {
@@ -328,7 +333,11 @@ func (ftm *FileTransferManager) sendFileChunks(ctx context.Context, stream netwo
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			ftm.logger.WithError(err).Error("Failed to close file")
+		}
+	}()
 
 	transfer.file = file
 	transfer.Status = FileTransferActive
@@ -444,7 +453,9 @@ func (ftm *FileTransferManager) ListTransfers() []*FileTransfer {
 // CleanupTransfer removes a completed or failed transfer
 func (ftm *FileTransferManager) CleanupTransfer(id string) {
 	if transfer, exists := ftm.transfers[id]; exists {
-		transfer.Close()
+		if err := transfer.Close(); err != nil {
+			ftm.logger.WithError(err).Error("Failed to close transfer")
+		}
 		delete(ftm.transfers, id)
 	}
 }

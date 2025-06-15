@@ -108,12 +108,16 @@ func TestCLISendFileValidation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create test file: %v", err)
 	}
-	defer os.Remove(testFile)
+	defer func() {
+		if err := os.Remove(testFile); err != nil {
+			t.Logf("Warning: Failed to remove test file: %v", err)
+		}
+	}()
 
 	// Test with invalid multiaddr
 	cmd := exec.Command("../../bin/peerchat-cli", "send-file", "invalid-multiaddr", testFile)
-	output, err := cmd.Output()
-	
+	output, _ := cmd.Output() // Error is expected for invalid input
+
 	outputStr := string(output)
 	// Currently file transfer is not implemented, so we expect the "not yet implemented" message
 	if !strings.Contains(outputStr, "File transfer not yet implemented") {

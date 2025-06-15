@@ -350,7 +350,11 @@ func runInteractiveChat(cmd *cobra.Command, args []string) {
 		fmt.Printf("❌ Failed to start P2P node: %v\n", err)
 		return
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			fmt.Printf("Warning: Failed to stop wrapper: %v\n", err)
+		}
+	}()
 
 	// Get node information
 	nodeInfo := wrapper.GetNodeInfo()
@@ -514,7 +518,11 @@ func runPassiveListen(cmd *cobra.Command, args []string) {
 		fmt.Printf("❌ Failed to start P2P node: %v\n", err)
 		return
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			fmt.Printf("Warning: Failed to stop wrapper: %v\n", err)
+		}
+	}()
 
 	// Get node information
 	nodeInfo := wrapper.GetNodeInfo()
@@ -769,7 +777,11 @@ func monitorLogFileRealTime(logChan chan<- string) {
 		logChan <- fmt.Sprintf("❌ Failed to open log file: %v", err)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			logChan <- fmt.Sprintf("❌ Failed to close log file: %v", err)
+		}
+	}()
 
 	// Seek to end of file
 	if _, err := file.Seek(0, 2); err != nil {
@@ -931,7 +943,11 @@ func runShowID(cmd *cobra.Command, args []string) {
 		fmt.Println("💡 Try running 'peerchat-cli init' first")
 		return
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			fmt.Printf("Warning: Failed to stop wrapper: %v\n", err)
+		}
+	}()
 
 	// Get node information
 	nodeInfo := wrapper.GetNodeInfo()
@@ -1039,7 +1055,11 @@ func runDoctor(cmd *cobra.Command, args []string) {
 		fmt.Println("   - Try different network (mobile hotspot)")
 		return
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			fmt.Printf("Warning: Failed to stop wrapper: %v\n", err)
+		}
+	}()
 
 	fmt.Println("  - Node creation: ✅ Success")
 

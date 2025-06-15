@@ -197,8 +197,14 @@ func (sc *SignalCrypto) GetIdentityKey() []byte {
 
 // performDH performs Diffie-Hellman key exchange
 func performDH(privateKey []byte, publicKey []byte) ([]byte, error) {
-	sharedSecret := make([]byte, SharedKeySize)
-	curve25519.ScalarMult((*[32]byte)(sharedSecret), (*[32]byte)(privateKey), (*[32]byte)(publicKey))
+	if len(privateKey) != 32 || len(publicKey) != 32 {
+		return nil, fmt.Errorf("invalid key size: private=%d, public=%d", len(privateKey), len(publicKey))
+	}
+
+	sharedSecret, err := curve25519.X25519(privateKey, publicKey)
+	if err != nil {
+		return nil, fmt.Errorf("X25519 operation failed: %w", err)
+	}
 	return sharedSecret, nil
 }
 

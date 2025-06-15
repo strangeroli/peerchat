@@ -99,8 +99,7 @@ type PeerChatNode struct {
 	mu           sync.RWMutex
 
 	// Configuration
-	config     *NodeConfig
-	statusFile string
+	config *NodeConfig
 
 	// Message handling
 	messageManager *message.MessageManager
@@ -370,7 +369,11 @@ func (n *PeerChatNode) GetStats() map[string]interface{} {
 
 // handleStream handles incoming streams on the Xelvra protocol
 func (n *PeerChatNode) handleStream(stream network.Stream) {
-	defer stream.Close()
+	defer func() {
+		if err := stream.Close(); err != nil {
+			n.logger.WithError(err).Error("Failed to close stream")
+		}
+	}()
 
 	n.mu.Lock()
 	n.messageCount++

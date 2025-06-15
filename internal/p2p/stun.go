@@ -86,7 +86,12 @@ func (s *STUNClient) querySTUNServer(ctx context.Context, server string, localPo
 	if err != nil {
 		return "", 0, "", fmt.Errorf("failed to connect to STUN server: %w", err)
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			// Log error but don't fail the function - STUN query can continue
+			_ = err // Explicitly ignore error
+		}
+	}()
 
 	// Set deadline
 	deadline, ok := ctx.Deadline()
@@ -150,7 +155,12 @@ func (s *STUNClient) getLocalIP() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			// Log error but don't fail the function - local IP detection can continue
+			_ = err // Explicitly ignore error
+		}
+	}()
 
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	return localAddr.IP.String(), nil

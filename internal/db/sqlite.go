@@ -85,7 +85,9 @@ func NewSQLiteDB(dataDir string, password string, logger *logrus.Logger) (*SQLit
 	
 	// Initialize database schema
 	if err := sqliteDB.initSchema(); err != nil {
-		db.Close()
+		if closeErr := db.Close(); closeErr != nil {
+			sqliteDB.logger.WithError(closeErr).Error("Failed to close database after schema init error")
+		}
 		return nil, fmt.Errorf("failed to initialize schema: %w", err)
 	}
 	
@@ -482,7 +484,11 @@ func (db *SQLiteDB) LoadMessages(fromDID, toDID string, limit int) ([]*message.M
 	if err != nil {
 		return nil, fmt.Errorf("failed to query messages: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			db.logger.WithError(err).Error("Failed to close rows")
+		}
+	}()
 
 	var messages []*message.Message
 
@@ -621,12 +627,16 @@ func (db *SQLiteDB) LoadFileTransfers(peerID string, limit int) ([]map[string]in
 	if err != nil {
 		return nil, fmt.Errorf("failed to query file transfers: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			db.logger.WithError(err).Error("Failed to close rows")
+		}
+	}()
 
 	var transfers []map[string]interface{}
 
 	for rows.Next() {
-		var transfer map[string]interface{} = make(map[string]interface{})
+		transfer := make(map[string]interface{})
 		var transferID, peerIDStr, fileName, fileHash string
 		var fileSize, status, direction int64
 		var progress float64

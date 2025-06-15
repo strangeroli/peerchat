@@ -279,7 +279,11 @@ func (mm *MessageManager) handleOutgoingMessage(msg *Message) error {
 		mm.logger.WithError(err).Error("Failed to open stream to recipient")
 		return fmt.Errorf("failed to connect to recipient: %w", err)
 	}
-	defer stream.Close()
+	defer func() {
+		if err := stream.Close(); err != nil {
+			mm.logger.WithError(err).Error("Failed to close stream")
+		}
+	}()
 
 	// Serialize and send the message
 	msgData, err := json.Marshal(msg)
@@ -315,7 +319,11 @@ func (mm *MessageManager) handleOutgoingMessage(msg *Message) error {
 
 // handleMessageStream handles incoming message streams
 func (mm *MessageManager) handleMessageStream(stream network.Stream) {
-	defer stream.Close()
+	defer func() {
+		if err := stream.Close(); err != nil {
+			mm.logger.WithError(err).Error("Failed to close message stream")
+		}
+	}()
 
 	remotePeer := stream.Conn().RemotePeer()
 	mm.logger.WithField("peer", remotePeer.String()).Debug("Handling message stream")
@@ -367,7 +375,11 @@ func (mm *MessageManager) handleMessageStream(stream network.Stream) {
 
 // handleFileStream handles incoming file streams
 func (mm *MessageManager) handleFileStream(stream network.Stream) {
-	defer stream.Close()
+	defer func() {
+		if err := stream.Close(); err != nil {
+			mm.logger.WithError(err).Error("Failed to close file stream")
+		}
+	}()
 
 	remotePeer := stream.Conn().RemotePeer()
 	mm.logger.WithField("peer", remotePeer.String()).Debug("Handling file stream")
@@ -380,7 +392,11 @@ func (mm *MessageManager) handleFileStream(stream network.Stream) {
 
 // handleGroupStream handles incoming group message streams
 func (mm *MessageManager) handleGroupStream(stream network.Stream) {
-	defer stream.Close()
+	defer func() {
+		if err := stream.Close(); err != nil {
+			mm.logger.WithError(err).Error("Failed to close group stream")
+		}
+	}()
 
 	remotePeer := stream.Conn().RemotePeer()
 	mm.logger.WithField("peer", remotePeer.String()).Debug("Handling group stream")
@@ -431,11 +447,7 @@ func (mm *MessageManager) verifyMessage(msg *Message) bool {
 	return true // Placeholder
 }
 
-// encryptMessage encrypts a message using Signal Protocol
-func (mm *MessageManager) encryptMessage(msg *Message) error {
-	// TODO: Implement Signal Protocol encryption
-	return nil
-}
+
 
 // SendFile initiates a file transfer to a peer
 func (mm *MessageManager) SendFile(peerID peer.ID, filePath string) error {
@@ -449,7 +461,11 @@ func (mm *MessageManager) SendFile(peerID peer.ID, filePath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open file stream to peer: %w", err)
 	}
-	defer stream.Close()
+	defer func() {
+		if err := stream.Close(); err != nil {
+			mm.logger.WithError(err).Error("Failed to close file transfer stream")
+		}
+	}()
 
 	// Start file transfer
 	return mm.fileTransferManager.StartFileTransfer(mm.ctx, stream, filePath, peerID)

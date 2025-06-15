@@ -188,7 +188,11 @@ func (dm *DiscoveryManager) listenUDPBroadcast() {
 		dm.logger.WithError(err).Error("Failed to listen on UDP broadcast")
 		return
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			dm.logger.WithError(err).Error("Failed to close UDP connection")
+		}
+	}()
 	
 	dm.logger.Info("Listening for UDP broadcasts on :42424")
 	
@@ -225,7 +229,11 @@ func (dm *DiscoveryManager) sendUDPBroadcast() {
 		dm.logger.WithError(err).Warn("Failed to create UDP broadcast connection - check firewall/network")
 		return
 	}
-	defer conn.Close()
+	defer func() {
+		if err := conn.Close(); err != nil {
+			dm.logger.WithError(err).Error("Failed to close UDP broadcast connection")
+		}
+	}()
 
 	_, err = conn.Write([]byte(message))
 	if err != nil {
