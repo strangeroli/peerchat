@@ -4,7 +4,13 @@
 *.dll
 *.so
 *.dylib
+main
+peerchat-cli
+peerchat-api
+
+# Build directories
 bin/
+dist/
 pkg/
 
 # Test binary, built with `go test -c`
@@ -69,3 +75,6 @@ temp/
 # Build artifacts
 dist/
 release/
+
+# Development files
+TODO.md

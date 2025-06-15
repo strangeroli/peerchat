@@ -1,6 +1,218 @@
 # Messenger Xelvra: Digital Freedom Manifest
 
+> 🚀 **A secure, decentralized peer-to-peer communication platform built on end-to-end encryption**
+
 **Messenger Xelvra** is a peer-to-peer (P2P) communication platform designed to restore privacy, security, and user control over digital communication. The project aims to create a secure, efficient, and decentralized platform that pushes the boundaries of P2P communication capabilities.
+
+## 📋 Table of Contents
+
+- [About the Project](#i-vision)
+- [Why Messenger Xelvra?](#why-messenger-xelvra)
+- [Key Features](#key-features)
+- [Development Epochs](#development-epochs)
+- [Architecture](#ii-architecture)
+- [Security](#iii-security)
+- [Installation](#quick-start)
+- [Usage](#usage)
+- [Roadmap](#roadmap)
+- [Troubleshooting](#troubleshooting)
+- [Documentation](#-documentation)
+- [Contributing](#ix-how-to-contribute)
+- [License](#xi-licensing)
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [📖 User Guide](docs/USER_GUIDE.md) | Complete guide for end users |
+| [🔧 Installation Guide](docs/INSTALLATION.md) | Platform-specific installation instructions |
+| [👨‍💻 Developer Guide](docs/DEVELOPER_GUIDE.md) | Development setup and contribution guide |
+| [📋 API Reference](docs/API_REFERENCE.md) | Complete API documentation |
+
+## Why Messenger Xelvra?
+
+In today's digital landscape, centralized communication platforms have become the norm, but they come with significant drawbacks that threaten our fundamental rights to privacy and freedom of communication.
+
+### The Problems We Solve
+
+**🔒 Privacy Concerns**: Traditional messaging platforms often collect, analyze, and monetize personal data. Conversations, contacts, and communication patterns may become products in various business models.
+
+**🏢 Centralized Architecture**: Messages typically pass through centralized servers, creating potential vulnerabilities to service interruptions, data breaches, and external pressures. Single points of failure can affect millions of users.
+
+**🚫 Limited Communication Freedom**: Centralized platforms may face various pressures that could impact communication freedom, content availability, and user autonomy in different jurisdictions.
+
+**💰 Data as Currency**: Private conversations often become part of business models focused on targeted advertising and behavioral analysis, where user privacy becomes a tradeable commodity.
+
+### Our Solution: True Digital Freedom
+
+Messenger Xelvra addresses these fundamental issues by providing:
+
+- **Direct P2P Communication**: Your messages travel directly between devices without intermediaries
+- **End-to-End Encryption**: Only you and your intended recipient can read your messages
+- **Decentralized Architecture**: No single point of failure or control
+- **User Data Ownership**: Your data stays on your devices, under your control
+- **Censorship Resistance**: No central authority can block or monitor your communications
+- **Open Source Transparency**: Every line of code is open for inspection and verification
+
+This isn't just about better technology—it's about restoring the fundamental human right to private communication and digital freedom.
+
+## Key Features
+
+### 🔐 Security & Privacy
+- **Signal Protocol Implementation**: Industry-standard end-to-end encryption with X3DH handshake and Double Ratchet
+- **Forward Secrecy**: Automatic key rotation ensures past communications remain secure even if current keys are compromised
+- **Metadata Protection**: Onion routing obfuscates communication patterns and network analysis
+- **Zero-Knowledge Architecture**: No personal data stored on external servers
+
+### 🌐 Decentralized Network
+- **Hybrid P2P Model**: Direct peer connections with intelligent relay fallback
+- **Multiple Discovery Methods**: Kademlia DHT, mDNS, UDP broadcast, and mesh networking
+- **NAT Traversal**: Automatic hole-punching, STUN/TURN integration, and port-knocking for restrictive networks
+- **Offline Capability**: Local mesh networking via Bluetooth LE and Wi-Fi Direct
+
+### ⚡ Performance & Efficiency
+- **QUIC Transport**: Ultra-low latency communication with TCP fallback
+- **Resource Optimization**: <20MB memory usage, <1% CPU in idle mode
+- **Energy Efficient**: <15mW power consumption on mobile devices
+- **AI-Driven Routing**: Machine learning optimization for transport selection
+
+### 🛠️ Developer Friendly
+- **Modular Architecture**: Clean separation between CLI, API, and GUI components
+- **gRPC API**: Modern, efficient communication between components
+- **Cross-Platform**: Support for Linux, macOS, Windows, Android, and iOS
+- **Comprehensive Testing**: Unit, integration, and chaos engineering tests
+
+## Development Epochs
+
+Messenger Xelvra follows a structured development approach divided into distinct epochs, each building upon the previous foundation:
+
+### 🏗️ Epoch 1: CLI Foundation (Current)
+**Status: ✅ Largely Complete**
+
+The command-line interface serves as the foundation and testing ground for all core P2P functionality:
+
+- ✅ **P2P Core**: libp2p integration with QUIC/TCP transports
+- ✅ **Discovery Systems**: mDNS, UDP broadcast, and DHT peer discovery
+- ✅ **NAT Traversal**: STUN integration with automatic public IP detection
+- ✅ **File Transfer**: Secure P2P file sharing with chunking and progress tracking
+- ✅ **CLI Commands**: Complete command set (init, start, connect, send, discover, doctor)
+- ✅ **Logging & Diagnostics**: Comprehensive logging with rotation and network diagnostics
+- 🔄 **In Progress**: Interactive chat UI, advanced encryption, and mesh networking
+
+### 🔌 Epoch 2: API Service (Planned)
+**Status: 📋 Planned**
+
+Local gRPC API service to bridge P2P core with frontend applications:
+
+- **gRPC Server**: High-performance API with event-driven architecture
+- **Database Layer**: SQLite with WAL mode for persistent storage
+- **Monitoring**: Prometheus metrics and OpenTelemetry tracing
+- **Rate Limiting**: Protection against API abuse
+- **Stream Processing**: Real-time message and event streaming
+
+### 📱 Epoch 3: GUI Application (Planned)
+**Status: 📋 Planned**
+
+Cross-platform Flutter application with focus on mobile optimization:
+
+- **Modern UI/UX**: Material Design with accessibility compliance (WCAG 2.1 AA)
+- **Progressive Onboarding**: Visual P2P education and interactive demos
+- **Energy Optimization**: <100mW active usage, intelligent sleep modes
+- **Multi-Platform**: Android, iOS, Linux, macOS, Windows support
+- **Advanced Features**: Group chats, file sharing, voice calls
+
+### 🚀 Epoch 4: Advanced Features (Future)
+**Status: 🔮 Future Vision**
+
+Advanced capabilities and ecosystem expansion:
+
+- **Zero-Knowledge Proofs**: Enhanced privacy with ZKP identity verification
+- **Quantum Resistance**: Post-quantum cryptography integration
+- **Voice & Video**: Real-time multimedia communication
+- **Mesh Networks**: Advanced offline communication capabilities
+- **Community Features**: Decentralized governance and Hash Token ecosystem
+
+## 🚀 Quick Start
+
+```bash
+# Clone and build
+git clone https://github.com/Xelvra/peerchat.git
+cd peerchat
+go build -o bin/peerchat-cli cmd/peerchat-cli/main.go
+
+# Initialize and start
+./bin/peerchat-cli init
+./bin/peerchat-cli start
+```
+
+For detailed instructions, see the [Installation Guide](docs/INSTALLATION.md).
+
+## Usage
+
+### Basic Commands
+
+```bash
+# Initialize your identity
+./bin/peerchat-cli init
+
+# Start the P2P node
+./bin/peerchat-cli start
+
+# Check network status
+./bin/peerchat-cli status
+
+# Discover peers
+./bin/peerchat-cli discover
+
+# Connect to a peer
+./bin/peerchat-cli connect <peer_multiaddr>
+
+# Send a message
+./bin/peerchat-cli send <peer_multiaddr> "Hello, World!"
+
+# Send a file
+./bin/peerchat-cli send-file <peer_multiaddr> /path/to/file
+
+# Interactive chat mode
+./bin/peerchat-cli start
+
+# Listen for messages (debugging)
+./bin/peerchat-cli listen
+
+# Network diagnostics
+./bin/peerchat-cli doctor
+
+# View help
+./bin/peerchat-cli manual
+```
+
+For comprehensive usage instructions, see the [User Guide](docs/USER_GUIDE.md).
+
+## Roadmap
+
+### 🎯 Short Term (Next 3-6 months)
+- **Complete CLI Implementation**: Finish interactive chat UI and advanced encryption features
+- **Enhanced Security**: Implement full Signal Protocol with automatic key rotation
+- **Mesh Networking**: Add Bluetooth LE and Wi-Fi Direct support for offline communication
+- **Performance Optimization**: Achieve target metrics for latency and resource usage
+
+### 🚀 Medium Term (6-12 months)
+- **API Service**: Complete gRPC API implementation with monitoring and telemetry
+- **GUI Development**: Begin Flutter application development with focus on mobile platforms
+- **Advanced NAT Traversal**: Implement AI-driven transport prediction and port-knocking
+- **Community Building**: Establish contributor guidelines and community governance
+
+### 🌟 Long Term (1-2 years)
+- **Cross-Platform GUI**: Complete multi-platform application with full feature parity
+- **Voice & Video**: Real-time multimedia communication capabilities
+- **Quantum Resistance**: Post-quantum cryptography integration
+- **Ecosystem Expansion**: Hash Token system and decentralized governance (DAO)
+
+### 🔮 Future Vision (2+ years)
+- **Zero-Knowledge Features**: Advanced privacy with ZKP identity verification
+- **IoT Integration**: Extend P2P communication to IoT devices and embedded systems
+- **Protocol Standardization**: Work toward industry standardization of decentralized messaging
+- **Global Adoption**: Scale to support millions of users in a truly decentralized network
 
 ## I. Vision
 
@@ -18,259 +230,323 @@ Messenger Xelvra addresses this problem by providing a platform for direct, unce
 
 Xelvra Messenger architecture is built on principles of privacy protection, security, and decentralization. Key principles include:
 
-1. **P2P Communication:** Direct, encrypted communication between users without intermediaries.
-2. **Hybrid P2P Model:** Strategic use of direct P2P connections with priority and relay services as fallback to ensure functionality, sustainability, and trust building, without compromising user privacy. Implementation of **parallel transports (QUIC + pre-initialized TCP)** for latency minimization and resilience maximization, and **automated ICE framework with AI-driven prediction.**
-3. **User Experience:** Multi-platform support, efficiency, and intuitive design with **aggressive optimization for low resource consumption, including Progressive Onboarding (visual P2P explanation and interactive demo with local network simulator) and full Accessibility (WCAG 2.1 AA compliance, screen reader support).**
+1.  **P2P Communication:** Direct, encrypted communication between users without intermediaries.
+2.  **Hybrid P2P Model:** Strategic use of direct P2P connections with priority and relay services as fallback to ensure functionality, sustainability, and trust building, without compromising user privacy. Implementation of **parallel transports (QUIC + pre-initialized TCP)** for latency minimization and resilience maximization, and **automated ICE framework with AI-driven prediction.**
+3.  **User Experience:** Multi-platform support, efficiency, and intuitive design with **aggressive optimization for low resource consumption, including Progressive Onboarding (visual P2P explanation and interactive demo with local network simulator) and full Accessibility (WCAG 2.1 AA compliance, screen reader support).**
 
-### **B. Technická architektura**
+### **B. Technical Architecture**
 
-Messenger Xelvra je modulární systém skládající se ze tří hlavních komponent:
+Messenger Xelvra is a modular system consisting of three main components:
 
-1. **peerchat-cli (Go):** Nástroj příkazové řádky pro vývoj a testování P2P logiky a pro spouštění P2P uzlu na pozadí jako systémová služba.  
-2. **peerchat-api (Go):** Lokální API služba (gRPC) pro komunikaci s frontendovými aplikacemi, poskytující robustní rozhraní k P2P jádru a využívající **event-driven architekturu.**  
-3. **peerchat\_gui (Flutter):** Multiplatformní grafické uživatelské rozhraní, optimalizované pro mobilní zařízení s důrazem na energetickou efektivitu.
+1.  **peerchat-cli (Go):** Command-line tool for development and testing of P2P logic and for running P2P node in the background as a system service.
+2.  **peerchat-api (Go):** Local API service (gRPC) for communication with frontend applications, providing robust interface to P2P core and utilizing **event-driven architecture.**
+3.  **peerchat_gui (Flutter):** Multi-platform graphical user interface, optimized for mobile devices with emphasis on energy efficiency.
 
-![][image1]
+**Detailed description of Go modules (peerchat/internal/):**
 
-**Detailní popis Go modulů (peerchat/internal/):**
+* **p2p/:** P2P network management (go-libp2p, **single Kademlia DHT with local in-memory LRU caching layer and adaptive polling**, NAT traversal with **aggressive hole-punching, embedded STUN/TURN, AI-driven prediction and port-knocking tactics**, connection management with recovery mechanisms and pre-warmed TCP connections, **QUIC transport with kernel-level/user-space UDP batching, hardware acceleration and dynamic window scaling (BBR+Cubic), TCP fallback, Onion routing for *all* metadata with multiple encryption layers**, **Bluetooth LE/Wi-Fi Direct as fallback for mesh networks with smart power management**).
+* **crypto/:** Implementation of encryption protocols (Signal Protocol, X3DH, Double Ratchet), secure key management with **Memory Hardening (mlock(), canaries, memguard)**, **protection against Replay/DoS attacks (advanced rate-limiting, token buckets)**, and **resistance to timing attacks.**
+* **user/:** User identity management (**DID format did:xelvra:\<hash\>, verification with Ed25519 signatures (ZKP planned for Epoch 4\)**), **implementation of peer discovery by DID, robust user blocking (with encrypted blacklist in DHT), Sybil Resistance (dynamic Proof-of-Work, automatic trust system, "Ghost" contact limitations).**
+* **message/:** Message and file management (transfer, offline messages, pub/sub, **complex group management with roles and invitations**). Optimized large file transfer using chunking.
+* **api/:** Implementation of gRPC server and API handlers with **robust error handling, input validation and rate limiting. Includes monitoring for Prometheus/Grafana and distributed tracing with OpenTelemetry.**
+* **db/:** Database operations abstraction (**SQLite with WAL mode for high performance, low latency and corruption resistance, one encrypted userdata.db file per user with automatic WAL file checkpointing**).
+* **util/:** Helper functions (logging, metrics, validation).
 
-* **p2p/:** Správa P2P sítě (go-libp2p, **jeden Kademlia DHT s lokální in-memory LRU caching vrstvou a adaptivním pollingem**, NAT traversal s **agresivním hole-punchingem, embedded STUN/TURN, AI-driven predikcí a port-knockingtactic**, správa spojení s mechanismy zotavení a pre-warmed TCP spojeními, **QUIC transport s kernel-level/user-space UDP batchingem, hardwarovou akcelerací a dynamickým škálováním okna (BBR+Cubic), TCP fallback, Onion routing pro *všechna* metadata s více vrstvami šifrování**, **Bluetooth LE/Wi-Fi Direct jako fallback pro mesh sítě s chytrým řízením spotřeby**).  
-* **crypto/:** Implementace šifrovacích protokolů (Signal Protocol, X3DH, Double Ratchet), bezpečná správa klíčů s **Memory Hardeningem (mlock(), canaries, memguard)**, **ochrana proti Replay/DoS útokům (pokročilé rate-limiting, token buckets)**, a **odolnost proti timing útokům.**  
-* **user/:** Správa uživatelských identit (**DID formát did:xelvra:\<hash\>, ověřování podpisy Ed25519 (ZKP plánováno pro Epochu 4\)**), **implementace vyhledávání peerů podle DID, robustní blokování uživatelů (s šifrovanou černou listou v DHT), Sybil Resistance (dynamický Proof-of-Work, systém automatické důvěry, omezení "Ghost" kontaktů).**  
-* **message/:** Správa zpráv a souborů (přenos, offline zprávy, pub/sub, **komplexní správa skupin s rolími a pozvánkami**). Optimalizovaný přenos velkých souborů pomocí chunkingu.  
-* **api/:** Implementace gRPC serveru a API handlerů s **robustním error handlingem, validací vstupů a rate limitingem. Zahrnuje monitoring pro Prometheus/Grafana a distribuované trasování s OpenTelemetry.**  
-* **db/:** Abstrakce databázových operací (**SQLite s WAL módem pro vysoký výkon, nízkou latenci a odolnost proti korupci, jeden šifrovaný soubor userdata.db na uživatele s automatickým checkpointingem WAL souboru**).  
-* **util/:** Pomocné funkce (logování, metriky, validace).
+### **B.1 Protocol Specifications**
 
-### **B.1 Protokolové specifikace**
+* **Message Framing:** All messages and data packets will be structured using Google Protobuf for efficient serialization and deserialization, ensuring compactness and transfer speed.
+* **Handshake sequence:** Detailed flow diagram for X3DH and Double Ratchet protocol will be available in separate documentation, describing the exact sequence of key exchange and encrypted session establishment.
+* **Onion routing for metadata:** Implementation of layered encryption for metadata (e.g., peer IP addresses in DHT queries, timestamps) inspired by Onion/Garlic routing principles, to make network graph analysis and determination of real source/destination of communication more difficult for external observers.
+* **Mesh Networking Protocol (Example)**:
 
-* **Message Framing:** Všechny zprávy a datové pakety budou strukturovány pomocí Google Protobuf pro efektivní serializaci a deserializaci, zajišťující kompaktnost a rychlost přenosu.  
-* **Handshake sekvence:** Detailní diagram toku pro X3DH a Double Ratchet protokol bude k dispozici v samostatné dokumentaci, popisující přesnou sekvenci výměny klíčů a navázání šifrované relace.  
-* **Onion routing pro metadata:** Implementace vrstveného šifrování pro metadata (např. IP adresy peerů v DHT dotazech, časová razítka) inspirovaná principy Onion/Garlic routingu, aby se ztížila analýza síťového grafu a určení reálného zdroje/cíle komunikace pro externí pozorovatele.  
-* **Mesh Networking Protocol (Příklad)**:  
-  // pkg/proto/mesh.proto  
-  syntax \= "proto3";
+    ```proto
+    // pkg/proto/mesh.proto
+    syntax = "proto3";
 
-  package xelvra.mesh;
+    package xelvra.mesh;
 
-  message MeshPacket {  
-      bytes sender\_id \= 1;  
-      bytes message\_id \= 2;  
-      uint32 hop\_limit \= 3; // TTL pro flooding  
-      oneof payload {  
-          bytes raw\_payload \= 4; // Šifrovaný a Onion routovaný obsah  
-          // Volitelně specifické typy pro debug  
-      }  
-  }
+    message MeshPacket {
+      bytes sender_id = 1;       // Node identifier
+      bytes message_id = 2;      // Unique message ID
+      uint32 hop_limit = 3;      // TTL for flooding (prevents infinite loops)
+      
+      oneof payload {
+        bytes raw_payload = 4;   // Encrypted onion-routed content
+        // Add other payload types here if needed (e.g. debug types)
+      }
+    }
+    ```
 
-  * **Transportní vrstva pro BLE:** Využije GATT profil s MTU (Maximum Transmission Unit) 512B pro efektivní přenos dat.  
-  * **Wi-Fi Direct:** Aktivace pouze při dostatečné úrovni baterie (\>50%) vzhledem k její vyšší spotřebě.
+* **Transport layer for BLE:** Will use GATT profile with MTU (Maximum Transmission Unit) 512B for efficient data transfer.
+* **Wi-Fi Direct:** Activation only with sufficient battery level (>50%) due to its higher consumption.
 
+## **III. Security**
 
-## **III. Zabezpečení**
+### **A. Philosophy**
 
-### **A. Filozofie**
+Security is a key principle of Xelvra Messenger. The platform protects users from various threats, including passive eavesdropping, active attacks and censorship with emphasis on **proactive defense, minimization of exposed information and resistance to advanced threats.**
 
-Zabezpečení je klíčovým principem Xelvra Messengeru. Platforma chrání uživatele před různými hrozbami, včetně pasivního odposlouchávání, aktivních útoků a cenzury s důrazem na **proaktivní obranu, minimalizaci odhalených informací a odolnost vůči pokročilým hrozbám.**
+### **B. Cryptographic Core**
 
-### **B. Kryptografické jádro**
+* **E2EE:** End-to-end encryption of messages between sender and recipient using Signal Protocol.
+* **Cryptographic primitives:** Standardized and proven algorithms (AES-256, Curve25519, SHA-256/SHA-3, HKDF), **optimized using hardware acceleration (AES-NI).**
+* **Secure key management:** Generation, storage and management of keys with emphasis on **protection in memory (mlock(), canaries, memguard) and on disk (encrypted SQLite files).**
+* **Key Rotation (Zero-Touch):** Automatic rotation of long-term keys every **60 days** with user notification **48 hours** before expiration. During "grace period" of 72 hours, parallel encryption with both old and new keys is performed to ensure lossless transition. Maintaining key history for decrypting older messages. This process will be fully automated and transparent to users.
+* **Data integrity:** Digital signatures and hashing for verification of origin and integrity of messages.
+* **Zero-Knowledge Proof:** Implementation of ZKP mechanisms for **identity verification without revealing sensitive information (planned for Epoch 4, currently Ed25519 signatures).**
 
-* **E2EE:** End-to-end šifrování zpráv mezi odesílatelem a příjemcem pomocí Signal Protocolu.  
-* **Kryptografické primitivy:** Standardizované a prověřené algoritmy (AES-256, Curve25519, SHA-256/SHA-3, HKDF), **optimalizované využitím hardwarové akcelerace (AES-NI).**  
-* **Bezpečná správa klíčů:** Generování, ukládání a správa klíčů s důrazem na **ochranu v paměti (mlock(), canaries, memguard) a na disku (šifrované soubory SQLite).**  
-* **Key Rotation (Zero-Touch):** Automatická rotace dlouhodobých klíčů každých **60 dní** s uživatelskou notifikací **48 hodin** před expirací. Během "grace period" 72 hodin se provádí paralelní šifrování starým i novým klíčem pro zajištění bezztrátového přechodu. Udržování historie klíčů pro dešifrování starších zpráv. Tento proces bude plně automatizovaný a transparentní pro uživatele.  
-* **Integrita dat:** Digitální podpisy a hašování pro ověření původu a integrity zpráv.  
-* **Zero-Knowledge Proof:** Implementace ZKP mechanismů pro **ověřování identity bez odhalení citlivých informací (plánováno pro Epochu 4, prozatím Ed25519 podpisy).**
+### **C. Metadata Protection**
 
-### **C. Ochrana metadat**
-
-Minimalizace metadat a decentralizovaná identifikace uživatelů. **Onion routing pro obfuscaci *všech* metadat s cílem ztížit analýzu síťového grafu.**
+Minimization of metadata and decentralized user identification. **Onion routing for obfuscation of *all* metadata with the goal of making network graph analysis more difficult.**
 
 ### **C.6 Forward Secrecy**
 
-* **Rotace klíčů:** Automatická rotace klíčů pro Double Ratchet algoritmus každých 100 odeslaných zpráv nebo po 24 hodinách nečinnosti, čímž se minimalizuje množství dat šifrovaných jedním klíčem.  
-* **Automatická invalidace:** Klíče budou automaticky invalidovány po 7 dnech neaktivity v konverzaci, což zajistí, že staré relace nebudou představovat dlouhodobé riziko.
+* **Key rotation:** Automatic key rotation for Double Ratchet algorithm every 100 sent messages or after 24 hours of inactivity, minimizing the amount of data encrypted with one key.
+* **Automatic invalidation:** Keys will be automatically invalidated after 7 days of inactivity in conversation, ensuring that old sessions will not pose long-term risk.
 
-### **D. Odolnost sítě**
+### **D. Network Resilience**
 
-Ochrana proti **Sybil útokům (s dynamickým Proof-of-Work pro nové DHT záznamy, systémem automatické důvěry a omezením nových kontaktů pro "Ghost" uživatele)**, **DoS útokům (s pokročilým rate-limiting a správou spojení na více úrovních)** a **Replay útokům (s timestampy a sekvenčními čísly).**
+Protection against **Sybil attacks (with dynamic Proof-of-Work for new DHT records, automatic trust system and limitation of new contacts for "Ghost" users)**, **DoS attacks (with advanced rate-limiting and multi-level connection management)** and **Replay attacks (with timestamps and sequence numbers).**
 
 ### **C.7 Protection against Advanced Threats**
 
-* **Sybil Resistance:**  
-  * **Požadavek na Proof-of-Work:** Pro přidání nových záznamů do DHT (např. nových uživatelských identit) bude vyžadován dynamický Proof-of-Work, jehož obtížnost se bude měnit na základě síťové zátěže, aby se ztížil DDoS útok (flooding PoW požadavky).  
-  * **Omezení kontaktů pro "Ghost" uživatele:** Uživatelé ve statusu "Ghost" budou mít omezený počet nových kontaktů, které mohou iniciovat za 24 hodin (např. 3/den), aby se zabránilo spamování.  
-  * **Automatická důvěra:** Noví uživatelé mohou komunikovat s 5 kontakty/den bez CAPTCHA. Po ověření (např. QR kód od existujícího a důvěryhodného kontaktu) limity zmizí.  
-* **Quantum Resistance:**  
-  * **Hybridní šifrování:** Pro dlouhodobou ochranu budou kombinovány současné (např. X25519) a post-kvantové (např. Kyber768) algoritmy pro handshake fázi a navázání sdílených tajemství.  
-  * **Možnost migrace:** Architektura bude navržena tak, aby umožňovala budoucí migraci na čistě post-kvantová kryptografická schémata, jakmile budou standardizována a prověřena.  
-  * 
+* **Sybil Resistance:**
+    * **Proof-of-Work Requirement:** For adding new records to the DHT (e.g., new user identities), dynamic Proof-of-Work will be required, whose difficulty will change based on network load to make DDoS attacks (PoW flooding requests) more difficult.
+    * **Contact Limitation for "Ghost" Users:** Users in "Ghost" status will have a limited number of new contacts they can initiate per 24 hours (e.g., 3/day) to prevent spamming.
+    * **Automatic Trust:** New users can communicate with 5 contacts/day without CAPTCHA. After verification (e.g., QR code from an existing and trusted contact), limits will disappear.
+* **Quantum Resistance:**
+    * **Hybrid Encryption:** For long-term protection, current (e.g., X25519) and post-quantum (e.g., Kyber768) algorithms will be combined for the handshake phase and establishing shared secrets.
+    * **Migration Capability:** The architecture will be designed to allow future migration to purely post-quantum cryptographic schemes once they are standardized and proven.
 
-### **E. Transparentnost**
+### **E. Transparency**
 
-Open-source kód a nezávislé bezpečnostní audity.
+Open-source code and independent security audits.
 
-## **IV. Ekosystém**
+## **IV. Ecosystem**
 
-### **A. Hash Tokeny (HT)**
+### **A. Hash Tokens (HT)**
 
-Interní virtuální kredity pro odměňování přínosu a zajištění udržitelnosti. HT nemají finanční hodnotu mimo ekosystém Xelvra Messengeru.
+Internal virtual credits for rewarding contributions and ensuring sustainability. HT have no financial value outside the Xelvra Messenger ecosystem.
 
-### **B. Cesta důvěry**
+### **B. Path of Trust**
 
-Systém pro budování důvěry a reputace mezi uživateli. Statusy uživatelů: Duch, Uživatel, Architekt, Ambasador, Bůh.
+A system for building trust and reputation among users. User statuses: Ghost, User, Architect, Ambassador, God.
 
-### **C. Komunitní správa**
+### **C. Community Governance**
 
-Dlouhodobý cíl: Decentralizovaná správa sítě komunitou (DAO).
+Long-term goal: Decentralized network governance by the community (DAO).
 
-## **V. Obchodní model**
+## **V. Business Model**
 
-Transparentní a komunitně orientované financování. Crowdfunding a prodej HT pro financování dalšího rozvoje.
+Transparent and community-oriented funding. Crowdfunding and HT sales to finance further development.
 
-## **VI. Kvantifikovatelné cíle a Energetická optimalizace**
+## **VI. Quantifiable Goals and Energy Optimization**
 
-### **A. Kvantifikovatelné cíle výkonu a zdrojů**
+### **A. Quantifiable Performance and Resource Goals**
 
-* **Latence P2P zprávy (jedna cesta):**  
-  * \< 50 ms pro přímá spojení.  
-  * \< 200 ms přes relé.  
-  * **Maximální latence při zátěži:** \< 100ms při 100 zprávách/s.  
-* **Spotřeba paměti (CLI/Backend idle):** \< 20 MB (Go runtime).  
-* **Paměťový limit při aktivním použití:** \< 50MB (Go runtime).  
-* **Spotřeba CPU (CLI/Backend idle):** \< 1%.  
-* **Latence API volání (interní):** \< 10 ms.  
-* **Propustnost API:** \> 1000 RPC/s pro základní operace.
+* **P2P message latency (one way):**
+    * < 50 ms for direct connections.
+    * < 200 ms through relay.
+    * **Maximum latency under load:** < 100ms at 100 messages/s.
+* **Memory consumption (CLI/Backend idle):** < 20 MB (Go runtime).
+* **Memory limit during active use:** < 50MB (Go runtime).
+* **CPU consumption (CLI/Backend idle):** < 1%.
+* **API call latency (internal):** < 10 ms.
+* **API throughput:** > 1000 RPC/s for basic operations.
 
-### **B. Energetická optimalizace**
+### **B. Energy Optimization**
 
-Optimalizace spotřeby energie pro Go backend a Flutter frontend s **explicitními cíli pro mobilní zařízení:**
+Energy consumption optimization for Go backend and Flutter frontend with **explicit goals for mobile devices:**
 
-* **Spotřeba energie (mobilní, idle, pozadí):** \< 15 mW.  
-* **Spotřeba energie (mobilní, aktivní chat):** \< 100 mW.  
-* **Energetická náročnost (mobil):** \< 5% baterie/hod při aktivním chatování.  
-* Implementace inteligentních strategií spánku a probuzení s využitím platformně specifických mechanismů (WorkManager pro Android, Background Fetch/VOIP Push pro iOS).
+* **Energy consumption (mobile, idle, background):** < 15 mW.
+* **Energy consumption (mobile, active chat):** < 100 mW.
+* **Energy demand (mobile):** < 5% battery/hour during active chatting.
+* Implementation of intelligent sleep and wake strategies using platform-specific mechanisms (WorkManager for Android, Background Fetch/VOIP Push for iOS).
 
-### **VI.B Implementační strategie**
+### **VI.B Implementation Strategy**
 
-* **Batching operací:** Shlukování menších síťových požadavků nebo databázových zápisů do větších dávek pro snížení režie a optimalizaci spotřeby energie. **Včetně kernel-level QUIC batchingu pro Linux.**  
-* **Adaptivní polling:** Dynamická úprava frekvence heartbeatů, DHT dotazů a dalších periodických síťových aktivit na základě stavu baterie (např. L3 dotazy 1x za 10 min při \<20% baterie) a aktivity uživatele, aby se minimalizovala zbytečná aktivita na pozadí.  
-* **Event-Driven Architektura:** Nahrazení polling mechanismů pro komunikaci mezi GUI a API a v rámci P2P sítě push notifikacemi (gRPC streams, WebSockets) pro snížení zátěže na CPU a baterii.  
-* **Hardwarová akcelerace:** Využití instrukcí AES-NI (pokud jsou k dispozici na hardware) a dalších specifických instrukčních sad pro kryptografické operace za účelem zvýšení výkonu a snížení spotřeby CPU.  
-* **Battery-Aware GC:** Statické nastavení GOGC=30 \+ ballast alloc (např. 1GB dummy array) pro stabilitu paměti a snížení frekvence GC cyklů.  
-* **Deep Sleep Mode:** Při nízké úrovni baterie (\<15%) deaktivujte DHT a přepněte na "mesh-only" režim (pouze mDNS/Bluetooth LE/Wi-Fi Direct) pro minimální spotřebu.  
-  * **Řešení konfliktních scénářů:**  
-    * **Příchozí hovor:** Využití "light push" notifikací (např. FCM s vysokou prioritou, ale minimálním payloadem) pro lokální wake-up P2P uzlu. Očekávaná spotřeba: \~0.2 mW.  
-    * **Důležitá zpráva:** Zpráva uložená v lokální mesh síti (přes BLE/Wi-Fi Direct) nebo DHT bude notifikována až při probuzení uzlu z Deep Sleep módu (např. pravidelné synchronizační okno). Očekávaná spotřeba: \~0.1 mW.  
-    * **Systémové aktualizace:** Synchronizace aktualizací databáze/aplikace v definovaných časových oknech (např. každých 6 hodin) během noci nebo při připojení k nabíječce. Očekávaná spotřeba: \~0.3 mW během synchronizace.  
-    * **Periodický ping (BLE beaconing):** Pro udržení minimální konektivity a usnadnění probuzení uzlu, i při vypnutém WiFi/Bluetooth.
+* **Operation Batching:** Grouping smaller network requests or database writes into larger batches to reduce overhead and optimize energy consumption. **Including kernel-level QUIC batching for Linux.**
+* **Adaptive Polling:** Dynamically adjusting the frequency of heartbeats, DHT queries, and other periodic network activities based on battery status (e.g., L3 queries once every 10 min when battery <20%) and user activity to minimize unnecessary background activity.
+* **Event-Driven Architecture:** Replacing polling mechanisms for communication between GUI and API and within the P2P network with push notifications (gRPC streams, WebSockets) to reduce CPU and battery load.
+* **Hardware Acceleration:** Utilizing AES-NI instructions (if available on hardware) and other specific instruction sets for cryptographic operations to increase performance and reduce CPU consumption.
+* **Battery-Aware GC:** Static setting of GOGC=30 + ballast alloc (e.g., 1GB dummy array) for memory stability and reduction of GC cycle frequency.
+* **Deep Sleep Mode:** At low battery levels (<15%), deactivate DHT and switch to "mesh-only" mode (only mDNS/Bluetooth LE/Wi-Fi Direct) for minimal consumption.
+    * **Resolution of Conflict Scenarios:**
+        * **Incoming Call:** Using "light push" notifications (e.g., high-priority FCM with minimal payload) for local wake-up of the P2P node. Expected consumption: ~0.2 mW.
+        * **Important Message:** A message stored in the local mesh network (via BLE/Wi-Fi Direct) or DHT will be notified only when the node wakes up from Deep Sleep mode (e.g., regular synchronization window). Expected consumption: ~0.1 mW.
+        * **System Updates:** Synchronization of database/application updates in defined time windows (e.g., every 6 hours) during the night or when connected to a charger. Expected consumption: ~0.3 mW during synchronization.
+        * **Periodic Ping (BLE beaconing):** To maintain minimal connectivity and facilitate node wake-up, even with WiFi/Bluetooth off.
 
-    
+## **VII. Deployment and Operations**
 
-## **VII. Nasazení a operace**
-
-Strategie nasazení, distribuce a údržby aplikace.
+Application deployment, distribution, and maintenance strategy.
 
 ### **VII. Deployment Strategy**
 
-* **Automatizované buildy:** Plně automatizovaná CI/CD pipeline, která zahrnuje kompilaci, testování a podepisování všech binárních souborů a balíčků digitálními podpisy (s využitím Sigstore/cosign).  
-* **Reproducible builds:** Zajištění, že binární soubory jsou reprodukovatelné z daného zdrojového kódu, což umožňuje nezávislým stranám ověřit integritu a absenci neoprávněných změn.  
-* **Delta Updates (pro GUI):** Integrace **bsdiff** pro efektivní doručování malých aktualizací (\<100KB) sítě, minimalizující velikost stahovaných dat (kritické pro mesh sítě).  
-* **Podpora offline aktualizací:** Možnost doručování aktualizací i v lokální mesh síti bez přístupu k internetu, což zvyšuje robustnost a autonomii uživatelů.
+* **Automated Builds:** Fully automated CI/CD pipeline that includes compilation, testing, and signing of all binaries and packages with digital signatures (using Sigstore/cosign).
+* **Reproducible Builds:** Ensuring that binaries are reproducible from a given source code, allowing independent parties to verify integrity and absence of unauthorized changes.
+* **Delta Updates (for GUI):** Integration of **bsdiff** for efficient delivery of small network updates (<100KB), minimizing the size of downloaded data (critical for mesh networks).
+* **Offline Update Support:** The ability to deliver updates even in a local mesh network without internet access, increasing system robustness and user autonomy.
 
-## **VIII. Testování a Zajištění Kvality**
+## **VIII. Testing and Quality Assurance**
 
-Důkladné testování pro zajištění spolehlivosti a bezpečnosti, včetně:
+Thorough testing to ensure reliability and security, including:
 
-* Unit testy  
-* Integrační testy  
-* E2E testy  
-* Výkonnostní a zátěžové testy proti definovaným metrikám.  
-* **Chaos Engineering:** Simulace selhání sítě a uzlů (např. náhodné pády uzlů, ztráta paketů, zpoždění, simulace výpadků internetu v Docker testech) pro ověření odolnosti systému v nepředvídatelných podmínkách.  
-  * **Integrace do CI pipeline/docker-compose.yml:**  
-    \# Příklad pro docker-compose.yml pro síťový chaos  
-    services:  
-      network-chaos:  
-        image: nicholasjackson/chaos-http  
-        command: \-target p2p-network \-latency 100ms \-jitter 50ms \-loss 10%  
-        \# Přidejte sítě a závislosti pro cílení na p2p-network
+* Unit tests
+* Integration tests
+* E2E tests
+* Performance and load tests against defined metrics.
+* **Chaos Engineering:** Simulation of network and node failures (e.g., random node crashes, packet loss, delays, simulation of internet outages in Docker tests) to verify system resilience under unpredictable conditions.
+    * **Integration into CI pipeline/docker-compose.yml:**
 
-* **Fuzzing:** Testování robustnosti parsování protokolů a vstupů pomocí generování náhodných, potenciálně škodlivých dat (zejména **pro QUIC handshake protokoly a Protobuf zprávy**).  
-  * **Nástroje:** go-fuzz pro Go moduly.  
-    \# Příklad použití go-fuzz  
-    go-fuzz \-bin=./message-fuzzer.zip \-workdir=/fuzz
+        ```yaml
+        # Example for docker-compose.yml for network chaos
+        services:
+          network-chaos:
+            image: nicholasjackson/chaos-http
+            command: -target p2p-network -latency 100ms -jitter 50ms -loss 10%
+            # Add networks and dependencies to target p2p-network
+        ```
 
-* **Penetrační testování:** Využití externích nástrojů a technik pro penetrační testování (např. Nmap, Metasploit, OWASP ZAP – pro testování exposed API, pokud bude relevantní, jinak pro síťovou vrstvu) pro odhalení zranitelností.  
-  * **Penetrační testování QUIC handshake:** Otestujte pomocí [QUIC-Intruder](https://github.com/vanhauser-thc/thc-quic-intruder).  
-  * **Side-channel útoky:** Ověřte odolnost proti side-channel útokům pomocí [CacheScout](https://github.com/cachescout/cachescout) (pro ověření AES-NI implementace a dalších kryptografických operací).  
-  * **Odolnost proti timing útokům:** Analyzujte a přidejte umělá, konstantní zpoždění v kryptografických operacích (např. porovnávání klíčů), aby se zabránilo timing útokům.  
-* **Testování v reálných sítích:**  
-  * **Veřejné WiFi s captive portály:** Testování připojitelnosti a funkčnosti P2P.  
-  * **Restriktivní firewally:** Ověření schopnosti procházet restriktivní firewally (porty 80/443).  
-  * **Mobilní sítě s častým handoverem:** Testování odolnosti spojení a P2P sítě.  
-* **Energy Profiling:** Integrujte do CI pipeline:  
-  \# Pro Linux backend  
-  perf stat \-e power/energy-pkg/ ./peerchat-cli test \--duration 5m  
-  \# Pro Android frontend  
-  adb shell dumpsys batterystats \--enable full-wake-history  
-  adb bugreport \> bugreport.txt \# Analyzujte v Battery Historian
+* **Fuzzing:** Testing the robustness of protocol parsing and inputs by generating random, potentially malicious data (especially **for QUIC handshake protocols and Protobuf messages**).
+    * **Tools:** go-fuzz for Go modules.
 
-## **IX. Jak přispívat**
+        ```bash
+        # Example of go-fuzz usage
+        go-fuzz -bin=./message-fuzzer.zip -workdir=/fuzz
+        ```
 
-Informace o tom, jak se zapojit do vývoje a komunity Xelvra Messengeru. Pro usnadnění prvního spuštění a vývoje bude k dispozici příkaz peerchat-cli setup a **Docker-based testovací prostředí.**
+* **Penetration Testing:** Utilizing external tools and techniques for penetration testing (e.g., Nmap, Metasploit, OWASP ZAP – for testing exposed API, if relevant, otherwise for the network layer) to uncover vulnerabilities.
+    * **QUIC Handshake Penetration Testing:** Test using [QUIC-Intruder](https://github.com/vanhauser-thc/thc-quic-intruder).
+    * **Side-channel Attacks:** Verify resistance to side-channel attacks using [CacheScout](https://github.com/cachescout/cachescout) (to verify AES-NI implementation and other cryptographic operations).
+    * **Timing Attack Resistance:** Analyze and add artificial, constant delays in cryptographic operations (e.g., key comparisons) to prevent timing attacks.
+* **Real-world Network Testing:**
+    * **Public WiFi with Captive Portals:** Testing connectivity and P2P functionality.
+    * **Restrictive Firewalls:** Verifying the ability to traverse restrictive firewalls (ports 80/443).
+    * **Mobile Networks with Frequent Handover:** Testing connection and P2P network resilience.
+* **Energy Profiling:** Integrate into CI pipeline:
 
-## **X. Kodex Chování (Code of Conduct): Vytváříme Respektující Komunitu**
+    ```bash
+    # For Linux backend
+    perf stat -e power/energy-pkg/ ./peerchat-cli test --duration 5m
+    # For Android frontend
+    adb shell dumpsys batterystats --enable full-wake-history
+    adb bugreport > bugreport.txt # Analyze in Battery Historian
+    ```
 
-Xelvra je komunita postavená na důvěře, otevřenosti a spolupráci. Pro zajištění bezpečného, přívětivého a inkluzivního prostředí pro všechny, zavedli jsme tento Kodex Chování. Platí pro všechny účastníky projektu.
+## **IX. How to Contribute**
 
-### **A. Naše Hodnoty**
+Information on how to get involved in the development and community of Xelvra Messenger. For easier initial setup and development, the `peerchat-cli setup` command and a **Docker-based testing environment** will be available.
 
-* Respekt, inkluzivita, otevřenost, spolupráce, bezpečí.
+## **X. Code of Conduct: Building a Respectful Community**
 
-### **B. Očekávané Chování**
+Xelvra is a community built on trust, openness, and collaboration. To ensure a safe, welcoming, and inclusive environment for all, we have established this Code of Conduct. It applies to all project participants.
 
-* Být vstřícný a trpělivý.  
-* Používat vítací a inkluzivní jazyk.  
-* Být ohleduplný, poskytovat konstruktivní kritiku.  
-* Respektovat odlišné názory.  
-* Respektovat soukromí a bezpečnost.  
-* Přijímat zodpovědnost za své chyby.
+### **A. Our Values**
 
-### **C. Nepřípustné Chování**
+* Respect, inclusivity, openness, collaboration, safety.
 
-* Obtěžování, diskriminace, osobní útoky, trolling, škodlivý kód, zveřejňování soukromých informací, nátlak/vyhrožování.
+### **B. Expected Behavior**
 
-### **D. Vymáhání Kodexu**
+* Be welcoming and patient.
+* Use welcoming and inclusive language.
+* Be considerate, provide constructive criticism.
+* Respect differing opinions.
+* Respect privacy and security.
+* Take responsibility for your mistakes.
 
-Případy porušení Kodexu Chování se řeší spravedlivě a transparentně.
+### **C. Unacceptable Behavior**
 
-## **XI. Licencování**
+* Harassment, discrimination, personal attacks, trolling, malicious code, publishing private information, coercion/threats.
 
-Messenger Xelvra je licencován pod **GNU Affero General Public License v3.0 (AGPLv3)**.
+### **D. Enforcement of the Code**
 
-## **XII. Glosář**
+Cases of Code of Conduct violations are handled fairly and transparently.
 
-* **Kademlia DHT:** Distribuovaná hašovací tabulka používaná pro objevování peerů a ukládání dat. V Xelvra Messengeru bude využívána s lokální in-memory LRU caching vrstvou.  
-* **HT (Hash Token):** Interní virtuální kredity v ekosystému Xelvra Messengeru, sloužící k odměňování uživatelů za přínos k síti (např. relayování zpráv, udržování DHT uzlu) a zajištění udržitelnosti. HT nemají finanční hodnotu mimo ekosystém.  
-* **Progressive Onboarding:** Uživatelsky přívětivý proces prvního spuštění, který postupně vysvětluje koncepty P2P a provádí uživatele nastavením, včetně vizuálních simulací sítě.  
-* **Zero-Touch Šifrování:** Automatická správa kryptografických klíčů bez nutnosti manuálního zásahu uživatele, včetně automatické rotace, "grace period" a notifikací.  
-* **Kernel-Level QUIC Batching:** Optimalizace přenosu dat v QUIC protokolu, kde jsou malé pakety shlukovány a odesílány přímo z jádra operačního systému (např. pomocí SO\_ZEROCOPY a io\_uring na Linuxu) pro snížení režie a zlepšení propustnosti. Pro ostatní OS fallback na user-space batching.  
-* **Deep Sleep Mode:** Energeticky úsporný režim pro mobilní aplikace, kdy jsou síťové aktivity minimalizovány a DHT je deaktivováno ve prospěch lokální mesh komunikace (mDNS, Bluetooth LE/Wi-Fi Direct) pro maximální úsporu baterie, s řešením konfliktů probuzení (light push, BLE beaconing).  
-* **AI-Driven Prediction / AI-Based Routing:** Použití lehkých modelů strojového učení (např. ONNX Runtime) k dynamickému vyhodnocování síťových podmínek a výběru nejefektivnějšího transportního protokolu nebo cesty zprávy v reálném čase, s validací vstupů a sandboxingem modelu.  
-* **SQLite s WAL (Write-Ahead Logging):** Databázový režim, který zlepšuje výkon a odolnost proti pádům databáze, minimalizuje fragmentaci a umožňuje efektivní checkpointing.  
-* **Port-Knocking:** Technika pro otevírání portů na firewallu odesláním předdefinované sekvence paketů na uzavřené porty, což zvyšuje obtížnost pro útočníky.
+## **XI. Licensing**
 
-## **XIII. Průvodce řešením běžných problémů (Troubleshooting Guide)**
+Messenger Xelvra is licensed under **GNU Affero General Public License v3.0 (AGPLv3)**.
 
-| Problém | Diagnostika | Řešení |
-| :---- | :---- | :---- |
-| **NAT failure** | peerchat-cli status \--nat | Aplikace by se měla pokusit o automatické řešení pomocí hole-punchingu a STUN/TURN. Pokud selže, aplikace se přepne na relé. Ruční konfigurace portů (port forwarding) na routeru je poslední možností. Zobrazí se diagnostický overlay v GUI. |
-| **Nízká rychlost zpráv** | peerchat-cli status \--latency | Aplikace by měla automaticky vybírat nejrychlejší transport (QUIC/TCP/relé) na základě AI predikce. Zkontrolujte kvalitu sítě, případně se zkuste připojit k jinému relé serveru. Zobrazí se diagnostický overlay v GUI. |
-| **Offline fungování** | peerchat-cli status \--network | Ověřte, zda je aktivní mDNS a zda jsou v lokální síti další peery. Zkontrolujte, zda je povoleno Bluetooth/Wi-Fi Direct pro mesh komunikaci. |
-| **Vysoká spotřeba CPU** | Monitorujte procesy OS (top, htop). | Zkontrolujte logy aplikace. Aplikace automaticky optimalizuje GC a polling. Může indikovat problém s konkrétním modulem, který je třeba profilovat a optimalizovat. |
-| **Nejde se připojit** | peerchat-cli connect \<peer\_id\> \--verbose | Zkontrolujte dostupnost cílového peeru. Aplikace by měla automaticky procházet NAT (včetně port-knockingu). Ověřte, zda firewall neblokuje komunikaci. |
-| **Zprávy nedochází** | Zkontrolujte historii klíčů. | Klíče se automaticky rotují a invalidují po 7 dnech neaktivity. Zkontrolujte logy na obou stranách pro detaily handshake a doručení. Využijte "grace period" pro synchronizaci klíčů. |
-| **Problémy s ID** | peerchat-cli id | Zkuste zregenerovat ID (pozor na ztrátu historie). Ověřte, zda se ID správně publikuje do DHT. Aplikace má mechanismy Sybil resistance a automatické ověření důvěry. |
-| **GUI se zpomaluje** | Sledujte FPS v nastavení GUI nebo pomocí Flutter DevTools. | Zkontrolujte RepaintBoundary a použití const widgetů. Optimalizujte ListView.builder s ItemExtent. Snižte frekvenci animací. |
+## **XII. Glossary**
 
-[image1]: <data:image/png;base64,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>
+* **Kademlia DHT:** A distributed hash table used for peer discovery and data storage. In Xelvra Messenger, it will be used with a local in-memory LRU caching layer.
+* **HT (Hash Token):** Internal virtual credits in the Xelvra Messenger ecosystem, used to reward users for contributions to the network (e.g., relaying messages, maintaining a DHT node) and to ensure sustainability. HT have no financial value outside the ecosystem.
+* **Progressive Onboarding:** A user-friendly first-run process that gradually explains P2P concepts and guides the user through setup, including visual network simulations.
+* **Zero-Touch Encryption:** Automatic management of cryptographic keys without the need for manual user intervention, including automatic rotation, "grace period," and notifications.
+* **Kernel-Level QUIC Batching:** Optimization of data transfer in the QUIC protocol, where small packets are grouped and sent directly from the operating system kernel (e.g., using SO_ZEROCOPY and io_uring on Linux) to reduce overhead and improve throughput. Fallback to user-space batching for other OS.
+* **Deep Sleep Mode:** An energy-saving mode for mobile applications where network activities are minimized and DHT is deactivated in favor of local mesh communication (mDNS, Bluetooth LE/Wi-Fi Direct) for maximum battery savings, with solutions for wake-up conflicts (light push, BLE beaconing).
+* **AI-Driven Prediction / AI-Based Routing:** Use of lightweight machine learning models (e.g., ONNX Runtime) to dynamically evaluate network conditions and select the most efficient transport protocol or message path in real-time, with input validation and model sandboxing.
+* **SQLite with WAL (Write-Ahead Logging):** A database mode that improves performance and crash resistance, minimizes fragmentation, and enables efficient checkpointing.
+* **Port-Knocking:** A technique for opening ports on a firewall by sending a predefined sequence of packets to closed ports, which increases difficulty for attackers.
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+#### 🔌 Connection Problems
+
+**Can't connect to other peers?**
+- Ensure the application is running and properly initialized
+- Check that your firewall isn't blocking the application
+- Try the automatic network diagnostics: run the doctor command for detailed analysis
+- If behind a restrictive firewall, the application will automatically use relay servers
+
+**Slow message delivery?**
+- The application automatically selects the fastest available transport method
+- Poor network quality may cause delays - try switching to a different network
+- Check your internet connection stability
+- The system will adapt to network conditions automatically
+
+#### 📱 Performance Issues
+
+**High battery drain on mobile?**
+- Enable power-saving mode in the application settings
+- The app automatically reduces background activity when battery is low
+- Close unnecessary background applications
+- Ensure you're using the latest version with energy optimizations
+
+**Application running slowly?**
+- Check available system memory and close other applications
+- The application is designed to use minimal resources
+- Restart the application if performance issues persist
+- Check system logs for any error messages
+
+#### 🔐 Security and Identity
+
+**Lost access to your identity?**
+- If you have a backup of your keys, you can restore your identity
+- Without a backup, you'll need to create a new identity (previous message history will be lost)
+- Always backup your identity keys in a secure location
+- Consider using the built-in backup features when available
+
+**Messages not being received?**
+- Ensure both you and the sender are online and connected
+- The application automatically manages encryption keys
+- If there's been a long period of inactivity, keys may need to be re-synchronized
+- Check that the sender hasn't been accidentally blocked
+
+#### 🌐 Network and Discovery
+
+**Can't find other users?**
+- Ensure you're on the same network for local discovery
+- Check that network discovery services are enabled
+- For internet-wide discovery, ensure you have a stable internet connection
+- The application will automatically try multiple discovery methods
+
+**Offline communication not working?**
+- Ensure Bluetooth and Wi-Fi are enabled for local mesh networking
+- Check that other users are within range and have compatible devices
+- Local mesh features may have limited range and capabilities
+- Some features require internet connectivity
+
+### Getting Help
+
+If you continue to experience issues:
+
+1. **Check the logs**: Application logs contain detailed diagnostic information
+2. **Run diagnostics**: Use the built-in diagnostic tools for automated troubleshooting
+3. **Consult documentation**: See the [User Guide](docs/USER_GUIDE.md) for detailed instructions
+4. **Community support**: Visit our community forums or GitHub issues for help
+5. **Report bugs**: If you've found a bug, please report it with detailed information
+
+For technical details and advanced troubleshooting, see the [Troubleshooting Guide](docs/TROUBLESHOOTING.md).
