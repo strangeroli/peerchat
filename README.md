@@ -4,6 +4,18 @@
 
 **Messenger Xelvra** is a peer-to-peer (P2P) communication platform designed to restore privacy, security, and user control over digital communication. The project aims to create a secure, efficient, and decentralized platform that pushes the boundaries of P2P communication capabilities.
 
+## 📢 Project Resources
+
+[![GitHub Issues](https://img.shields.io/github/issues/Xelvra/peerchat)](https://github.com/Xelvra/peerchat/issues)
+[![GitHub Wiki](https://img.shields.io/badge/GitHub-Wiki-blue)](https://github.com/Xelvra/peerchat/wiki)
+[![GitHub Discussions](https://img.shields.io/github/discussions/Xelvra/peerchat)](https://github.com/Xelvra/peerchat/discussions)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
+- 📖 **[Project Wiki](https://github.com/Xelvra/peerchat/wiki)** - Comprehensive documentation, tutorials, and guides
+- 🐛 **[Issues](https://github.com/Xelvra/peerchat/issues)** - Bug reports, feature requests, and project tracking
+- 💬 **[Discussions](https://github.com/Xelvra/peerchat/discussions)** - Community discussions, Q&A, and ideas
+- 🔧 **[Releases](https://github.com/Xelvra/peerchat/releases)** - Download latest versions and release notes
+
 ## 📋 Table of Contents
 
 - [About the Project](#i-vision)
@@ -22,12 +34,24 @@
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [📖 User Guide](docs/USER_GUIDE.md) | Complete guide for end users |
-| [🔧 Installation Guide](docs/INSTALLATION.md) | Platform-specific installation instructions |
-| [👨‍💻 Developer Guide](docs/DEVELOPER_GUIDE.md) | Development setup and contribution guide |
-| [📋 API Reference](docs/API_REFERENCE.md) | Complete API documentation |
+### 📖 Quick Access
+| Document | Description | Location |
+|----------|-------------|----------|
+| [📖 User Guide](docs/USER_GUIDE.md) | Complete guide for end users | Repository |
+| [🔧 Installation Guide](docs/INSTALLATION.md) | Platform-specific installation instructions | Repository |
+| [👨‍💻 Developer Guide](docs/DEVELOPER_GUIDE.md) | Development setup and contribution guide | Repository |
+| [📋 API Reference](docs/API_REFERENCE.md) | Complete API documentation | Repository |
+
+### 🌐 GitHub Wiki
+For comprehensive documentation, tutorials, and community-contributed guides, visit our **[GitHub Wiki](https://github.com/Xelvra/peerchat/wiki)**:
+
+- **[Getting Started](https://github.com/Xelvra/peerchat/wiki/Getting-Started)** - Quick start guide for new users
+- **[Installation Guide](https://github.com/Xelvra/peerchat/wiki/Installation)** - Detailed installation instructions for all platforms
+- **[User Manual](https://github.com/Xelvra/peerchat/wiki/User-Manual)** - Complete user documentation
+- **[Developer Documentation](https://github.com/Xelvra/peerchat/wiki/Developer-Guide)** - Technical documentation for contributors
+- **[API Documentation](https://github.com/Xelvra/peerchat/wiki/API-Reference)** - Complete API reference
+- **[Troubleshooting](https://github.com/Xelvra/peerchat/wiki/Troubleshooting)** - Common issues and solutions
+- **[FAQ](https://github.com/Xelvra/peerchat/wiki/FAQ)** - Frequently asked questions
 
 ## Why Messenger Xelvra?
 
@@ -545,8 +569,11 @@ If you continue to experience issues:
 
 1. **Check the logs**: Application logs contain detailed diagnostic information
 2. **Run diagnostics**: Use the built-in diagnostic tools for automated troubleshooting
-3. **Consult documentation**: See the [User Guide](docs/USER_GUIDE.md) for detailed instructions
-4. **Community support**: Visit our community forums or GitHub issues for help
-5. **Report bugs**: If you've found a bug, please report it with detailed information
+3. **Consult documentation**: See the [GitHub Wiki](https://github.com/Xelvra/peerchat/wiki) for comprehensive guides
+4. **Community support**:
+   - 💬 [GitHub Discussions](https://github.com/Xelvra/peerchat/discussions) - Ask questions and get community help
+   - 🐛 [GitHub Issues](https://github.com/Xelvra/peerchat/issues) - Report bugs and request features
+   - 📖 [Wiki FAQ](https://github.com/Xelvra/peerchat/wiki/FAQ) - Check frequently asked questions
+5. **Report bugs**: Use our [issue templates](https://github.com/Xelvra/peerchat/issues/new/choose) for detailed bug reports
 
-For technical details and advanced troubleshooting, see the [Troubleshooting Guide](docs/TROUBLESHOOTING.md).
+For technical details and advanced troubleshooting, see the [Troubleshooting Guide](docs/TROUBLESHOOTING.md) or [Wiki Troubleshooting](https://github.com/Xelvra/peerchat/wiki/Troubleshooting).

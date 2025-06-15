@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/Xelvra/peerchat/discussions
+    about: Ask questions, share ideas, and discuss with the community
+  - name: 📖 Documentation Wiki
+    url: https://github.com/Xelvra/peerchat/wiki
+    about: Comprehensive documentation, guides, and tutorials
+  - name: 🔧 Troubleshooting Guide
+    url: https://github.com/Xelvra/peerchat/wiki/Troubleshooting
+    about: Common issues and solutions
+  - name: 📋 FAQ
+    url: https://github.com/Xelvra/peerchat/wiki/FAQ
+    about: Frequently asked questions

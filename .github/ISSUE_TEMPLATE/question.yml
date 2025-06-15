@@ -1,0 +1,75 @@
+name: ❓ Question
+description: Ask a question about Xelvra
+title: "[QUESTION] "
+labels: ["question", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about Xelvra? We're here to help! 
+        
+        **Note**: For general discussions and community Q&A, consider using [GitHub Discussions](https://github.com/Xelvra/peerchat/discussions) instead.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: What would you like to know?
+      placeholder: Ask your question here...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question Category
+      description: What category does your question fall into?
+      options:
+        - Installation - Setting up Xelvra
+        - Usage - How to use features
+        - Configuration - Settings and customization
+        - Troubleshooting - Solving problems
+        - Development - Contributing and development
+        - Security - Privacy and security questions
+        - Architecture - Technical design questions
+        - Other - General questions
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide any relevant context that might help us answer your question
+      placeholder: |
+        - What are you trying to accomplish?
+        - What have you already tried?
+        - Any relevant system information?
+
+  - type: textarea
+    id: research
+    attributes:
+      label: Research Done
+      description: What documentation or resources have you already checked?
+      placeholder: |
+        - [ ] README.md
+        - [ ] GitHub Wiki
+        - [ ] User Guide
+        - [ ] Existing GitHub Issues
+        - [ ] GitHub Discussions
+        - [ ] Other: ___
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please check the following before submitting
+      options:
+        - label: I have searched existing issues and discussions for similar questions
+          required: true
+        - label: I have checked the documentation and wiki
+          required: true
+        - label: This is a specific question that would benefit from an issue (not general discussion)
+          required: true

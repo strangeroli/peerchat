@@ -1,5 +1,7 @@
 # Xelvra P2P Messenger - Installation Guide
 
+> 📖 **For the most comprehensive and up-to-date installation instructions, visit our [GitHub Wiki Installation Guide](https://github.com/Xelvra/peerchat/wiki/Installation)**
+
 ## Table of Contents
 - [System Requirements](#system-requirements)
 - [Quick Start](#quick-start)

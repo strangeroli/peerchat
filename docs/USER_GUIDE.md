@@ -1,5 +1,7 @@
 # Xelvra P2P Messenger - User Guide
 
+> 📖 **For the most comprehensive and up-to-date documentation, visit our [GitHub Wiki](https://github.com/Xelvra/peerchat/wiki)**
+
 ## Table of Contents
 - [Getting Started](#getting-started)
 - [Installation](#installation)
@@ -9,6 +11,12 @@
 - [Peer Discovery](#peer-discovery)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
+
+## 🌐 Additional Resources
+- **[GitHub Wiki](https://github.com/Xelvra/peerchat/wiki)** - Complete documentation hub
+- **[Installation Guide](https://github.com/Xelvra/peerchat/wiki/Installation)** - Detailed installation for all platforms
+- **[FAQ](https://github.com/Xelvra/peerchat/wiki/FAQ)** - Frequently asked questions
+- **[Troubleshooting](https://github.com/Xelvra/peerchat/wiki/Troubleshooting)** - Comprehensive troubleshooting guide
 
 ## Getting Started
 
@@ -184,9 +192,14 @@ Connect directly to peers using their Peer ID if you know it.
 - Run `peerchat-cli doctor` for automated diagnostics
 - Check logs in `~/.xelvra/peerchat.log`
 - Use `peerchat-cli listen` to see real-time network activity
+- Visit our **[GitHub Wiki](https://github.com/Xelvra/peerchat/wiki)** for comprehensive guides
+- Check the **[FAQ](https://github.com/Xelvra/peerchat/wiki/FAQ)** for common questions
+- Get community support in **[GitHub Discussions](https://github.com/Xelvra/peerchat/discussions)**
 - Consult the [Developer Guide](DEVELOPER_GUIDE.md) for technical details
 
 ## FAQ
+
+> 📋 **For a comprehensive FAQ with many more questions and answers, visit our [GitHub Wiki FAQ](https://github.com/Xelvra/peerchat/wiki/FAQ)**
 
 ### Q: Is Xelvra secure?
 A: Yes, all messages are end-to-end encrypted using modern cryptographic protocols. Your identity is self-sovereign and not controlled by any central authority.
@@ -208,4 +221,9 @@ A: Yes, but each instance needs its own configuration directory. Use the `--conf
 
 ---
 
-For technical details and development information, see the [Developer Guide](DEVELOPER_GUIDE.md).
+## 📚 More Resources
+
+- **[GitHub Wiki](https://github.com/Xelvra/peerchat/wiki)** - Complete documentation hub
+- **[Developer Guide](DEVELOPER_GUIDE.md)** - Technical details and development information
+- **[GitHub Discussions](https://github.com/Xelvra/peerchat/discussions)** - Community support and Q&A
+- **[GitHub Issues](https://github.com/Xelvra/peerchat/issues)** - Bug reports and feature requests
