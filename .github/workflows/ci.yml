@@ -90,13 +90,8 @@ jobs:
 
     - name: Build CLI
       run: |
+        mkdir -p bin
         go build -v -o bin/peerchat-cli cmd/peerchat-cli/main.go
-        
-    - name: Build API (if exists)
-      run: |
-        if [ -d "cmd/peerchat-api" ]; then
-          go build -v -o bin/peerchat-api cmd/peerchat-api/main.go
-        fi
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
