@@ -1,6 +1,6 @@
-# Messenger Xelvra: Digital Freedom Manifest
+# Messenger Xelvra: *#XelvraFree*
 
-> 🚀 **A secure, decentralized peer-to-peer communication platform built on end-to-end encryption**
+> 🚀 **Secure, decentralized P2P communication platform. Built on E2E encryption with AI-driven net prediction.**
 
 **Messenger Xelvra** is a peer-to-peer (P2P) communication platform designed to restore privacy, security, and user control over digital communication. The project aims to create a secure, efficient, and decentralized platform that pushes the boundaries of P2P communication capabilities.
 
@@ -74,7 +74,7 @@ This isn't just about better technology—it's about restoring the fundamental h
 - **QUIC Transport**: Ultra-low latency communication with TCP fallback
 - **Resource Optimization**: <20MB memory usage, <1% CPU in idle mode
 - **Energy Efficient**: <15mW power consumption on mobile devices
-- **AI-Driven Routing**: Machine learning optimization for transport selection
+- **AI-Driven Routing**: Machine learning optimization for intelligent transport selection
 
 ### 🛠️ Developer Friendly
 - **Modular Architecture**: Clean separation between CLI, API, and GUI components
