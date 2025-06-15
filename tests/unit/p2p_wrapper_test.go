@@ -19,7 +19,11 @@ func TestP2PWrapper_SimulationMode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to start wrapper in simulation mode: %v", err)
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			t.Errorf("Failed to stop wrapper: %v", err)
+		}
+	}()
 
 	// Verify simulation mode is active
 	if !wrapper.IsUsingSimulation() {
@@ -60,7 +64,11 @@ func TestP2PWrapper_RealMode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to start wrapper: %v", err)
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			t.Errorf("Failed to stop wrapper: %v", err)
+		}
+	}()
 
 	// Test node info
 	nodeInfo := wrapper.GetNodeInfo()
@@ -120,7 +128,11 @@ func TestP2PWrapper_MessageSending(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to start wrapper: %v", err)
 	}
-	defer wrapper.Stop()
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			t.Errorf("Failed to stop wrapper: %v", err)
+		}
+	}()
 
 	// Test sending various messages
 	testMessages := []struct {

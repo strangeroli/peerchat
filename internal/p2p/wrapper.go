@@ -413,7 +413,10 @@ func performLogRotation(logFile string) error {
 		newName := logFile + "." + strconv.Itoa(i+1)
 
 		if _, err := os.Stat(oldName); err == nil {
-			os.Rename(oldName, newName)
+			if err := os.Rename(oldName, newName); err != nil {
+				// Log error but continue with rotation
+				fmt.Printf("Warning: Failed to rotate log backup %s to %s: %v\n", oldName, newName, err)
+			}
 		}
 	}
 

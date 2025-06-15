@@ -198,7 +198,10 @@ func (dm *DiscoveryManager) listenUDPBroadcast() {
 		case <-dm.ctx.Done():
 			return
 		default:
-			conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+			if err := conn.SetReadDeadline(time.Now().Add(1 * time.Second)); err != nil {
+				dm.logger.WithError(err).Debug("Failed to set UDP read deadline")
+				continue
+			}
 			n, remoteAddr, err := conn.ReadFromUDP(buffer)
 			if err != nil {
 				if netErr, ok := err.(net.Error); ok && netErr.Timeout() {

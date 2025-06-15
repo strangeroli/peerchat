@@ -11,7 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Xelvra/peerchat/internal/crypto"
 	"github.com/Xelvra/peerchat/internal/user"
 	"github.com/google/uuid"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -96,10 +95,6 @@ type MessageManager struct {
 	// File transfer management
 	fileTransferManager *FileTransferManager
 
-	// Peer connections and encryption states
-	peerSessions map[peer.ID]*crypto.DoubleRatchetState
-	sessionMutex sync.RWMutex
-
 	// Context for cancellation
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -123,7 +118,6 @@ func NewMessageManager(h host.Host, identity *user.MessengerID, logger *logrus.L
 		outgoingMessages:    make(chan *Message, 100),
 		messageHandlers:     make(map[MessageType]MessageHandler),
 		fileTransferManager: NewFileTransferManager(logger),
-		peerSessions:        make(map[peer.ID]*crypto.DoubleRatchetState),
 		ctx:                 ctx,
 		cancel:              cancel,
 	}

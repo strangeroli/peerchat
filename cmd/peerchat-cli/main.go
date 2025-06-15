@@ -772,7 +772,10 @@ func monitorLogFileRealTime(logChan chan<- string) {
 	defer file.Close()
 
 	// Seek to end of file
-	file.Seek(0, 2)
+	if _, err := file.Seek(0, 2); err != nil {
+		logChan <- fmt.Sprintf("❌ Failed to seek to end of log file: %v", err)
+		return
+	}
 
 	logChan <- "📡 Real-time log monitoring started"
 
@@ -1020,7 +1023,11 @@ func runDoctor(cmd *cobra.Command, args []string) {
 			fmt.Printf("  - Simulation mode: ❌ Failed (%v)\n", err)
 			return
 		}
-		defer simWrapper.Stop()
+		defer func() {
+			if err := simWrapper.Stop(); err != nil {
+				fmt.Printf("Warning: Failed to stop simulation wrapper: %v\n", err)
+			}
+		}()
 
 		fmt.Println("  - Simulation mode: ✅ Success")
 		fmt.Println()

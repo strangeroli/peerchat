@@ -91,9 +91,13 @@ func (s *STUNClient) querySTUNServer(ctx context.Context, server string, localPo
 	// Set deadline
 	deadline, ok := ctx.Deadline()
 	if ok {
-		conn.SetDeadline(deadline)
+		if err := conn.SetDeadline(deadline); err != nil {
+			return "", 0, "", fmt.Errorf("failed to set deadline: %w", err)
+		}
 	} else {
-		conn.SetDeadline(time.Now().Add(5 * time.Second))
+		if err := conn.SetDeadline(time.Now().Add(5 * time.Second)); err != nil {
+			return "", 0, "", fmt.Errorf("failed to set deadline: %w", err)
+		}
 	}
 
 	// Create STUN binding request
