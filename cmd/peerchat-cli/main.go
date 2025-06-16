@@ -22,7 +22,7 @@ import (
 var (
 	cfgFile string
 	verbose bool
-	version = "0.1.0-alpha"
+	version = "0.2.0-alpha"
 )
 
 // rootCmd represents the base command when called without any subcommands
