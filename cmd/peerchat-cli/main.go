@@ -1273,14 +1273,27 @@ COMMANDS
 
   COMMUNICATION
     start             Interactive chat mode - type messages directly
-                      Use /help for chat commands: /peers, /discover, /connect
+                      Use /help for chat commands: /peers, /discover, /connect, /clear
                       All messages sent through interactive interface
+                      Features: Tab completion, command history, peer ID completion
+
+                      Interactive Commands:
+                        /help          - Show available commands
+                        /peers         - List connected peers
+                        /discover      - Discover peers in network
+                        /connect <id>  - Connect to specific peer
+                        /disconnect <id> - Disconnect from peer
+                        /status        - Show node status
+                        /clear         - Clear screen
+                        /quit, /exit   - Exit chat mode
 
                       Examples:
                         peerchat-cli start
                         > Hello World!
                         > /discover
                         > /peers
+                        > /connect 12D3KooW...
+                        > /clear
 
     send PEER MESSAGE Send an encrypted message to a specific peer (CLI mode)
                       PEER can be peer ID or multiaddr
@@ -1394,6 +1407,26 @@ NETWORK PROTOCOLS
     • Fallback: TCP for compatibility
     • Discovery: Kademlia DHT, mDNS, UDP broadcast
     • Mesh: Bluetooth LE, Wi-Fi Direct (mobile)
+
+INTERACTIVE CHAT FEATURES
+    Keyboard Shortcuts:
+    • Tab              - Auto-complete commands and peer IDs
+    • ↑/↓ arrows       - Navigate command history
+    • Ctrl+C           - Exit chat mode
+    • Ctrl+L           - Clear screen (alternative to /clear)
+    • Ctrl+A           - Move to beginning of line
+    • Ctrl+E           - Move to end of line
+    • Ctrl+R           - Search command history
+
+    Chat Commands:
+    • /help            - Show available commands
+    • /peers           - List connected peers
+    • /discover        - Discover peers in network
+    • /connect <id>    - Connect to specific peer
+    • /disconnect <id> - Disconnect from peer
+    • /status          - Show node status
+    • /clear           - Clear screen
+    • /quit, /exit     - Exit chat mode
 
 TROUBLESHOOTING
     If you encounter issues:

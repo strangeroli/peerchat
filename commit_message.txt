@@ -1,0 +1,20 @@
+feat: Advanced interactive CLI features with tab completion and command history
+
+- Implemented readline-based interactive CLI with professional features
+- Added tab completion for commands and peer ID auto-completion  
+- Implemented command history navigation with arrow keys (↑/↓)
+- Added clean escape sequence handling without artifacts
+- Implemented /clear command for screen management
+- Added proper Ctrl+C and Ctrl+R handling for graceful exit and history search
+- Updated documentation to reflect new interactive features
+- Fixed crypto test for proper key destruction verification
+- All core features verified: E2E encryption, NAT traversal, database with chat history
+
+Interactive features now include:
+- Tab completion: Auto-complete commands and peer IDs
+- Command history: Navigate with ↑/↓ arrows, search with Ctrl+R  
+- Peer ID completion: Type '/connect 12D3' + Tab to complete peer addresses
+- Screen control: /clear command and proper terminal handling
+- Persistent history: Commands saved to ~/.xelvra/chat_history
+
+Resolves GitHub Actions test failures and implements all requested CLI enhancements.
