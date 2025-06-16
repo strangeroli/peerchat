@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -17,7 +16,6 @@ import (
 	"github.com/Xelvra/peerchat/internal/p2p"
 	"github.com/Xelvra/peerchat/internal/user"
 	"github.com/chzyer/readline"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -669,11 +667,12 @@ func (c *InteractiveCompleter) updatePeers(wrapper *p2p.P2PWrapper) {
 		return
 	}
 
-	nodeInfo := wrapper.GetNodeInfo()
-	c.peers = make([]string, 0, len(nodeInfo.ConnectedPeers))
+	// Get connected peers using the wrapper method
+	connectedPeers := wrapper.GetConnectedPeers()
+	c.peers = make([]string, 0, len(connectedPeers))
 
-	for _, peer := range nodeInfo.ConnectedPeers {
-		c.peers = append(c.peers, peer.ID)
+	for _, peerID := range connectedPeers {
+		c.peers = append(c.peers, peerID)
 	}
 }
 
