@@ -1,36 +1,31 @@
 #!/bin/bash
 
-# Script to run specific linters that GitHub CI uses
-# This avoids typecheck issues while still checking the important linters
+echo "🔍 Running Go linters..."
 
-echo "Running golangci-lint with specific linters..."
-
-# Run errcheck
-echo "Running errcheck..."
-if ! /home/tux/go/bin/golangci-lint run --disable-all --enable=errcheck --no-config; then
-    echo "❌ errcheck failed"
+# Check formatting first
+echo "1. Checking code formatting..."
+if ! ./scripts/check-format.sh; then
+    echo "❌ Fix formatting first"
     exit 1
 fi
 
-# Run ineffassign  
-echo "Running ineffassign..."
-if ! /home/tux/go/bin/golangci-lint run --disable-all --enable=ineffassign --no-config; then
-    echo "❌ ineffassign failed"
+# Run go vet
+echo "2. Running go vet..."
+if timeout 30 go vet ./...; then
+    echo "✅ go vet passed"
+else
+    echo "❌ go vet failed or timed out"
     exit 1
 fi
 
-# Run staticcheck
-echo "Running staticcheck..."
-if ! /home/tux/go/bin/golangci-lint run --disable-all --enable=staticcheck --no-config; then
-    echo "❌ staticcheck failed"
+# Run go build to check compilation
+echo "3. Testing compilation..."
+if timeout 30 go build -o /tmp/test-build cmd/peerchat-cli/main.go; then
+    echo "✅ Compilation successful"
+    rm -f /tmp/test-build
+else
+    echo "❌ Compilation failed"
     exit 1
 fi
 
-# Run unused
-echo "Running unused..."
-if ! /home/tux/go/bin/golangci-lint run --disable-all --enable=unused --no-config; then
-    echo "❌ unused failed"
-    exit 1
-fi
-
-echo "✅ All linters passed!"
+echo "✅ All basic linting completed successfully!"

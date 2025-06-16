@@ -694,11 +694,11 @@ func createReadlineInstance() (*readline.Instance, *InteractiveCompleter, error)
 	os.MkdirAll(xelvraDir, 0700)
 
 	config := &readline.Config{
-		Prompt:          "> ",
-		HistoryFile:     filepath.Join(xelvraDir, "chat_history"),
-		AutoComplete:    completer,
-		InterruptPrompt: "^C",
-		EOFPrompt:       "exit",
+		Prompt:            "> ",
+		HistoryFile:       filepath.Join(xelvraDir, "chat_history"),
+		AutoComplete:      completer,
+		InterruptPrompt:   "^C",
+		EOFPrompt:         "exit",
 		HistorySearchFold: true,
 	}
 
