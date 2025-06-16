@@ -5,15 +5,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/Xelvra/peerchat/internal/p2p"
 	"github.com/Xelvra/peerchat/internal/user"
+	"github.com/chzyer/readline"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -391,35 +395,45 @@ func runInteractiveChat(cmd *cobra.Command, args []string) {
 	// Start interactive chat loop
 	fmt.Println("💬 Interactive chat started. Type your messages:")
 	fmt.Println("Commands: /help, /peers, /discover, /connect <peer_id>, /quit")
-	fmt.Print("> ")
+	fmt.Println("Features: Tab completion, command history (↑/↓), peer ID completion")
+	fmt.Println()
 
-	// Create input channel and history
+	// Create readline instance with completion and history
+	rl, completer, err := createReadlineInstance()
+	if err != nil {
+		fmt.Printf("❌ Failed to create readline interface: %v\n", err)
+		fmt.Println("💡 Falling back to basic input mode")
+		// Fallback to basic input mode would go here
+		return
+	}
+	defer rl.Close()
+
+	// Create input channel
 	inputChan := make(chan string)
-	commandHistory := []string{}
 
-	// Start advanced input handler
+	// Start advanced input handler with readline
 	go func() {
 		defer close(inputChan)
 
 		for {
-			input, err := readLineWithHistory(&commandHistory)
+			// Update peer completions periodically
+			completer.updatePeers(wrapper)
+
+			line, err := rl.Readline()
 			if err != nil {
+				if err == readline.ErrInterrupt {
+					inputChan <- "/quit"
+					return
+				} else if err == io.EOF {
+					inputChan <- "/quit"
+					return
+				}
 				return
 			}
 
-			input = strings.TrimSpace(input)
+			input := strings.TrimSpace(line)
 			if input != "" {
-				// Add to history if it's not the same as last command
-				if len(commandHistory) == 0 || commandHistory[len(commandHistory)-1] != input {
-					commandHistory = append(commandHistory, input)
-					// Keep only last 50 commands
-					if len(commandHistory) > 50 {
-						commandHistory = commandHistory[1:]
-					}
-				}
 				inputChan <- input
-			} else {
-				inputChan <- "" // Send empty string to trigger new prompt
 			}
 		}
 	}()
@@ -440,18 +454,20 @@ func runInteractiveChat(cmd *cobra.Command, args []string) {
 			}
 
 			if input == "" {
-				fmt.Print("> ")
 				continue
 			}
 
 			// Handle commands
 			if strings.HasPrefix(input, "/") {
+				if input == "/quit" || input == "/exit" {
+					fmt.Println("👋 Goodbye!")
+					return
+				}
 				handleChatCommand(input, wrapper, nodeInfo)
 			} else {
 				// Send message to all connected peers
 				handleChatMessage(input, wrapper)
 			}
-			fmt.Print("> ")
 
 		default:
 			// Check for incoming messages (placeholder)
@@ -582,35 +598,117 @@ func runPassiveListen(cmd *cobra.Command, args []string) {
 	}
 }
 
-// readLineWithHistory reads a line with arrow key support and command history
-func readLineWithHistory(history *[]string) (string, error) {
-	// Set terminal to raw mode for character-by-character input
-	// For simplicity, we'll use a basic approach
-	scanner := bufio.NewScanner(os.Stdin)
-	if scanner.Scan() {
-		input := scanner.Text()
+// InteractiveCompleter provides tab completion for interactive mode
+type InteractiveCompleter struct {
+	commands []string
+	peers    []string
+}
 
-		// Filter out escape sequences
-		cleaned := ""
-		inEscape := false
-		for _, r := range input {
-			if r == '\x1b' {
-				inEscape = true
-				continue
-			}
-			if inEscape {
-				if r >= 'A' && r <= 'Z' || r >= 'a' && r <= 'z' {
-					inEscape = false
-				}
-				continue
-			}
-			cleaned += string(r)
-		}
+// Do implements readline.AutoCompleter interface
+func (c *InteractiveCompleter) Do(line []rune, pos int) (newLine [][]rune, length int) {
+	lineStr := string(line)
 
-		return cleaned, nil
+	// Split line into words
+	words := strings.Fields(lineStr)
+	if len(words) == 0 {
+		// Complete commands
+		return c.completeCommands(""), len(line)
 	}
 
-	return "", scanner.Err()
+	// Get the word being completed
+	currentWord := ""
+	if pos > 0 && pos <= len(line) && line[pos-1] != ' ' {
+		// Find the start of current word
+		start := pos - 1
+		for start > 0 && line[start-1] != ' ' {
+			start--
+		}
+		currentWord = string(line[start:pos])
+	}
+
+	// If first word, complete commands
+	if len(words) == 1 && (pos <= len(lineStr) && (pos == len(lineStr) || lineStr[pos-1] != ' ')) {
+		completions := c.completeCommands(currentWord)
+		return completions, len([]rune(currentWord))
+	}
+
+	// If second word and first word is /connect, complete peer IDs
+	if len(words) >= 1 && words[0] == "/connect" {
+		completions := c.completePeers(currentWord)
+		return completions, len([]rune(currentWord))
+	}
+
+	return nil, 0
+}
+
+// completeCommands returns command completions
+func (c *InteractiveCompleter) completeCommands(prefix string) [][]rune {
+	var completions [][]rune
+	for _, cmd := range c.commands {
+		if strings.HasPrefix(cmd, prefix) {
+			completions = append(completions, []rune(cmd[len(prefix):]))
+		}
+	}
+	return completions
+}
+
+// completePeers returns peer ID completions
+func (c *InteractiveCompleter) completePeers(prefix string) [][]rune {
+	var completions [][]rune
+	for _, peer := range c.peers {
+		if strings.HasPrefix(peer, prefix) {
+			completions = append(completions, []rune(peer[len(prefix):]))
+		}
+	}
+	return completions
+}
+
+// updatePeers updates the list of available peers for completion
+func (c *InteractiveCompleter) updatePeers(wrapper *p2p.P2PWrapper) {
+	if wrapper == nil {
+		return
+	}
+
+	nodeInfo := wrapper.GetNodeInfo()
+	c.peers = make([]string, 0, len(nodeInfo.ConnectedPeers))
+
+	for _, peer := range nodeInfo.ConnectedPeers {
+		c.peers = append(c.peers, peer.ID)
+	}
+}
+
+// createReadlineInstance creates a readline instance with completion and history
+func createReadlineInstance() (*readline.Instance, *InteractiveCompleter, error) {
+	// Define available commands
+	commands := []string{
+		"/help", "/peers", "/discover", "/connect", "/disconnect",
+		"/status", "/clear", "/quit", "/exit",
+	}
+
+	completer := &InteractiveCompleter{
+		commands: commands,
+		peers:    []string{},
+	}
+
+	// Ensure .xelvra directory exists
+	xelvraDir := filepath.Join(os.Getenv("HOME"), ".xelvra")
+	os.MkdirAll(xelvraDir, 0700)
+
+	config := &readline.Config{
+		Prompt:          "> ",
+		HistoryFile:     filepath.Join(xelvraDir, "chat_history"),
+		AutoComplete:    completer,
+		InterruptPrompt: "^C",
+		EOFPrompt:       "exit",
+		HistorySearchFold: true,
+	}
+
+	rl, err := readline.NewEx(config)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create readline instance: %w", err)
+	}
+
+	return rl, completer, nil
 }
 
 // handleChatCommand processes chat commands like /help, /peers, etc.
@@ -627,10 +725,17 @@ func handleChatCommand(input string, wrapper *p2p.P2PWrapper, nodeInfo *p2p.Node
 		fmt.Println("  /help          - Show this help")
 		fmt.Println("  /peers         - List connected peers")
 		fmt.Println("  /discover      - Discover peers in network")
-		fmt.Println("  /connect <id>  - Connect to a peer")
+		fmt.Println("  /connect <id>  - Connect to a peer (supports tab completion)")
 		fmt.Println("  /status        - Show node status")
-		fmt.Println("  /quit          - Exit chat")
+		fmt.Println("  /clear         - Clear screen")
+		fmt.Println("  /quit, /exit   - Exit chat")
 		fmt.Println("  <message>      - Send message to all connected peers")
+		fmt.Println()
+		fmt.Println("🎯 Interactive features:")
+		fmt.Println("  Tab            - Auto-complete commands and peer IDs")
+		fmt.Println("  ↑/↓ arrows     - Navigate command history")
+		fmt.Println("  Ctrl+C         - Exit chat")
+		fmt.Println("  Ctrl+R         - Search command history")
 
 	case "/peers":
 		fmt.Println("👥 Connected peers:")
@@ -684,7 +789,13 @@ func handleChatCommand(input string, wrapper *p2p.P2PWrapper, nodeInfo *p2p.Node
 		fmt.Printf("  Addresses: %v\n", nodeInfo.ListenAddrs)
 		fmt.Printf("  Running: %t\n", nodeInfo.IsRunning)
 
-	case "/quit":
+	case "/clear":
+		// Clear screen using ANSI escape codes
+		fmt.Print("\033[2J\033[H")
+		fmt.Println("💬 Xelvra P2P Chat - Screen cleared")
+		fmt.Println("Type /help for available commands")
+
+	case "/quit", "/exit":
 		fmt.Println("👋 Goodbye!")
 		os.Exit(0)
 

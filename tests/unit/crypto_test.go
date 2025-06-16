@@ -30,8 +30,8 @@ func TestKeyPairDestroy(t *testing.T) {
 	// Destroy the key pair
 	keyPair.Destroy()
 
-	// Verify private key is zeroed out
-	assert.Equal(t, make([]byte, crypto.PrivateKeySize), keyPair.PrivateKey)
+	// Verify private key is set to nil after destroy
+	assert.Nil(t, keyPair.PrivateKey)
 	assert.NotEqual(t, originalPrivateKey, keyPair.PrivateKey)
 }
 

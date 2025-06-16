@@ -171,16 +171,32 @@ peerchat-cli manual [COMMAND]
 
 ## 💬 Interactive Chat
 
-When you run `peerchat-cli start`, you enter interactive chat mode with these features:
+When you run `peerchat-cli start`, you enter interactive chat mode with advanced features:
+
+### 🎯 Interactive Features
+
+**Tab Completion**: Press `Tab` to auto-complete commands and peer IDs
+- Type `/con` + `Tab` → `/connect`
+- Type `/connect 12D3` + `Tab` → completes with available peer IDs
+
+**Command History**: Use arrow keys to navigate previous commands
+- `↑` (Up arrow) - Previous command
+- `↓` (Down arrow) - Next command
+- `Ctrl+R` - Search command history
+
+**Screen Management**:
+- `Ctrl+C` - Exit chat gracefully
+- `/clear` - Clear screen
+- No escape sequence artifacts when using arrow keys
 
 ### Chat Commands
 
 All interactive commands start with `/`:
 
-- `/help` - Show available commands
+- `/help` - Show available commands and interactive features
 - `/peers` - List currently connected peers
 - `/discover` - Discover peers on your network
-- `/connect <peer_id>` - Connect to a specific peer
+- `/connect <peer_id>` - Connect to a specific peer (supports tab completion)
 - `/disconnect <peer_id>` - Disconnect from a peer
 - `/status` - Show your node status
 - `/clear` - Clear the chat screen
@@ -193,6 +209,22 @@ Simply type your message and press Enter:
 > Hello, world! 👋
 📤 Sending: Hello, world! 👋
 ✅ Message sent to 2 peer(s)
+```
+
+### Advanced Input Features
+
+**Peer ID Completion**: When typing `/connect`, press `Tab` after entering partial peer ID:
+```
+> /connect 12D3KooW<Tab>
+> /connect 12D3KooWEhwTXBCkpm61HyS25wjiE4zwf5s6Bwq7efxddqZXkAMd
+```
+
+**Command History**: Access previously used commands:
+```
+> /discover
+> /connect 12D3KooWExample...
+> Hello there!
+> <Press ↑ to get "Hello there!" again>
 ```
 
 ### Receiving Messages

@@ -26,12 +26,20 @@ peerchat-cli doctor
 peerchat-cli start
 ```
 
-Once in interactive mode:
+Once in interactive mode (with advanced features):
 ```
 > /discover
+> /connect 12D3<Tab>  # Auto-completes peer ID
 > /connect 12D3KooWExample...
 > Hello! This is my first message on Xelvra! 👋
+> <Press ↑ to repeat last message>
 ```
+
+### 🎯 Interactive Features
+- **Tab Completion**: Auto-complete commands and peer IDs
+- **Command History**: Navigate with ↑/↓ arrow keys
+- **Clean Input**: No escape sequence artifacts
+- **Screen Control**: `/clear` command and `Ctrl+C` handling
 
 ## 📖 Command Overview
 
