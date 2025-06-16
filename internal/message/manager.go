@@ -81,6 +81,14 @@ type Message struct {
 	IsEncrypted bool                   `json:"is_encrypted"`
 }
 
+// OfflineMessage represents a message stored for offline delivery
+type OfflineMessage struct {
+	Message   *Message  `json:"message"`
+	Attempts  int       `json:"attempts"`
+	CreatedAt time.Time `json:"created_at"`
+	ExpiresAt time.Time `json:"expires_at"`
+}
+
 // MessageManager handles message processing and routing
 type MessageManager struct {
 	host     host.Host
@@ -91,6 +99,11 @@ type MessageManager struct {
 	incomingMessages chan *Message
 	outgoingMessages chan *Message
 	messageHandlers  map[MessageType]MessageHandler
+
+	// Offline message storage
+	offlineMessages map[string][]*OfflineMessage // peer ID -> messages
+	offlineMutex    sync.RWMutex
+	offlineDir      string
 
 	// File transfer management
 	fileTransferManager *FileTransferManager
@@ -110,6 +123,11 @@ type MessageHandler interface {
 func NewMessageManager(h host.Host, identity *user.MessengerID, logger *logrus.Logger) *MessageManager {
 	ctx, cancel := context.WithCancel(context.Background())
 
+	// Create offline messages directory
+	homeDir, _ := os.UserHomeDir()
+	offlineDir := filepath.Join(homeDir, ".xelvra", "offline_messages")
+	os.MkdirAll(offlineDir, 0700)
+
 	mm := &MessageManager{
 		host:                h,
 		identity:            identity,
@@ -117,10 +135,15 @@ func NewMessageManager(h host.Host, identity *user.MessengerID, logger *logrus.L
 		incomingMessages:    make(chan *Message, 100),
 		outgoingMessages:    make(chan *Message, 100),
 		messageHandlers:     make(map[MessageType]MessageHandler),
+		offlineMessages:     make(map[string][]*OfflineMessage),
+		offlineDir:          offlineDir,
 		fileTransferManager: NewFileTransferManager(logger),
 		ctx:                 ctx,
 		cancel:              cancel,
 	}
+
+	// Load offline messages from disk
+	mm.loadOfflineMessages()
 
 	// Set up stream handlers
 	h.SetStreamHandler(MessageProtocolID, mm.handleMessageStream)
@@ -136,11 +159,13 @@ func (mm *MessageManager) Start() error {
 
 	// Start message processing goroutines
 	mm.logger.Debug("Adding goroutines to wait group...")
-	mm.wg.Add(2)
+	mm.wg.Add(3)
 	mm.logger.Debug("Starting processIncomingMessages goroutine...")
 	go mm.processIncomingMessages()
 	mm.logger.Debug("Starting processOutgoingMessages goroutine...")
 	go mm.processOutgoingMessages()
+	mm.logger.Debug("Starting processOfflineMessages goroutine...")
+	go mm.processOfflineMessages()
 
 	mm.logger.Info("MessageManager started successfully")
 	return nil
@@ -273,11 +298,19 @@ func (mm *MessageManager) handleOutgoingMessage(msg *Message) error {
 		return fmt.Errorf("invalid recipient peer ID: %w", err)
 	}
 
+	// Check if peer is connected
+	if mm.host.Network().Connectedness(recipientPeerID) != network.Connected {
+		mm.logger.WithField("peer_id", recipientPeerID.String()).Info("Peer not connected, storing message for offline delivery")
+		mm.storeOfflineMessage(msg)
+		return nil
+	}
+
 	// Open a stream to the recipient
 	stream, err := mm.host.NewStream(context.Background(), recipientPeerID, MessageProtocolID)
 	if err != nil {
-		mm.logger.WithError(err).Error("Failed to open stream to recipient")
-		return fmt.Errorf("failed to connect to recipient: %w", err)
+		mm.logger.WithError(err).Error("Failed to open stream to recipient, storing for offline delivery")
+		mm.storeOfflineMessage(msg)
+		return nil
 	}
 	defer func() {
 		if err := stream.Close(); err != nil {
@@ -667,4 +700,175 @@ func (mm *MessageManager) sendFileTransferResponse(stream network.Stream, respon
 func (mm *MessageManager) decryptMessage(msg *Message) error {
 	// TODO: Implement Signal Protocol decryption
 	return nil
+}
+
+// processOfflineMessages periodically tries to deliver offline messages
+func (mm *MessageManager) processOfflineMessages() {
+	defer mm.wg.Done()
+
+	ticker := time.NewTicker(30 * time.Second) // Check every 30 seconds
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			mm.deliverOfflineMessages()
+		case <-mm.ctx.Done():
+			return
+		}
+	}
+}
+
+// deliverOfflineMessages attempts to deliver stored offline messages
+func (mm *MessageManager) deliverOfflineMessages() {
+	mm.offlineMutex.Lock()
+	defer mm.offlineMutex.Unlock()
+
+	now := time.Now()
+
+	for peerIDStr, messages := range mm.offlineMessages {
+		peerID, err := peer.Decode(peerIDStr)
+		if err != nil {
+			mm.logger.WithError(err).Error("Invalid peer ID in offline messages")
+			continue
+		}
+
+		// Check if peer is connected
+		if mm.host.Network().Connectedness(peerID) != network.Connected {
+			continue // Peer not connected, skip for now
+		}
+
+		// Try to deliver messages
+		var remainingMessages []*OfflineMessage
+		for _, offlineMsg := range messages {
+			// Check if message has expired
+			if now.After(offlineMsg.ExpiresAt) {
+				mm.logger.WithField("message_id", offlineMsg.Message.ID).Info("Offline message expired")
+				continue
+			}
+
+			// Try to deliver the message
+			if err := mm.deliverOfflineMessage(peerID, offlineMsg); err != nil {
+				offlineMsg.Attempts++
+				if offlineMsg.Attempts < 5 { // Max 5 attempts
+					remainingMessages = append(remainingMessages, offlineMsg)
+				} else {
+					mm.logger.WithField("message_id", offlineMsg.Message.ID).Warn("Offline message delivery failed after max attempts")
+				}
+			} else {
+				mm.logger.WithField("message_id", offlineMsg.Message.ID).Info("Offline message delivered successfully")
+			}
+		}
+
+		// Update the offline messages list
+		if len(remainingMessages) == 0 {
+			delete(mm.offlineMessages, peerIDStr)
+		} else {
+			mm.offlineMessages[peerIDStr] = remainingMessages
+		}
+	}
+
+	// Save updated offline messages to disk
+	mm.saveOfflineMessages()
+}
+
+// deliverOfflineMessage delivers a single offline message
+func (mm *MessageManager) deliverOfflineMessage(peerID peer.ID, offlineMsg *OfflineMessage) error {
+	// Open a stream to the recipient
+	stream, err := mm.host.NewStream(context.Background(), peerID, MessageProtocolID)
+	if err != nil {
+		return fmt.Errorf("failed to open stream: %w", err)
+	}
+	defer stream.Close()
+
+	// Serialize and send the message
+	msgData, err := json.Marshal(offlineMsg.Message)
+	if err != nil {
+		return fmt.Errorf("failed to serialize message: %w", err)
+	}
+
+	// Write message length first (4 bytes)
+	msgLen := uint32(len(msgData))
+	lenBytes := make([]byte, 4)
+	lenBytes[0] = byte(msgLen >> 24)
+	lenBytes[1] = byte(msgLen >> 16)
+	lenBytes[2] = byte(msgLen >> 8)
+	lenBytes[3] = byte(msgLen)
+
+	if _, err := stream.Write(lenBytes); err != nil {
+		return fmt.Errorf("failed to write message length: %w", err)
+	}
+
+	// Write message data
+	if _, err := stream.Write(msgData); err != nil {
+		return fmt.Errorf("failed to write message data: %w", err)
+	}
+
+	return nil
+}
+
+// storeOfflineMessage stores a message for offline delivery
+func (mm *MessageManager) storeOfflineMessage(msg *Message) {
+	mm.offlineMutex.Lock()
+	defer mm.offlineMutex.Unlock()
+
+	offlineMsg := &OfflineMessage{
+		Message:   msg,
+		Attempts:  0,
+		CreatedAt: time.Now(),
+		ExpiresAt: time.Now().Add(7 * 24 * time.Hour), // Expire after 7 days
+	}
+
+	mm.offlineMessages[msg.To] = append(mm.offlineMessages[msg.To], offlineMsg)
+
+	mm.logger.WithFields(logrus.Fields{
+		"message_id": msg.ID,
+		"to":         msg.To,
+	}).Info("Message stored for offline delivery")
+
+	// Save to disk
+	mm.saveOfflineMessages()
+}
+
+// loadOfflineMessages loads offline messages from disk
+func (mm *MessageManager) loadOfflineMessages() {
+	mm.offlineMutex.Lock()
+	defer mm.offlineMutex.Unlock()
+
+	offlineFile := filepath.Join(mm.offlineDir, "messages.json")
+	data, err := os.ReadFile(offlineFile)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			mm.logger.WithError(err).Error("Failed to read offline messages file")
+		}
+		return
+	}
+
+	if err := json.Unmarshal(data, &mm.offlineMessages); err != nil {
+		mm.logger.WithError(err).Error("Failed to parse offline messages file")
+		return
+	}
+
+	// Count loaded messages
+	totalMessages := 0
+	for _, messages := range mm.offlineMessages {
+		totalMessages += len(messages)
+	}
+
+	mm.logger.WithField("count", totalMessages).Info("Loaded offline messages from disk")
+}
+
+// saveOfflineMessages saves offline messages to disk
+func (mm *MessageManager) saveOfflineMessages() {
+	offlineFile := filepath.Join(mm.offlineDir, "messages.json")
+	data, err := json.MarshalIndent(mm.offlineMessages, "", "  ")
+	if err != nil {
+		mm.logger.WithError(err).Error("Failed to serialize offline messages")
+		return
+	}
+
+	if err := os.WriteFile(offlineFile, data, 0600); err != nil {
+		mm.logger.WithError(err).Error("Failed to save offline messages to disk")
+		return
+	}
 }

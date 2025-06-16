@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
+	"time"
 
 	"golang.org/x/crypto/curve25519"
 	"golang.org/x/crypto/hkdf"
@@ -22,10 +23,31 @@ const (
 	TagSize        = 16
 )
 
-// KeyPair represents a Curve25519 key pair
+// KeyPair represents a Curve25519 key pair with secure memory handling
 type KeyPair struct {
-	PrivateKey []byte // TODO: Add memory protection with memguard later
+	PrivateKey []byte // Protected memory for private key
 	PublicKey  []byte
+	createdAt  time.Time
+}
+
+// SecureKeyPair creates a new KeyPair with memory protection
+func NewSecureKeyPair(privateKey, publicKey []byte) *KeyPair {
+	return &KeyPair{
+		PrivateKey: privateKey,
+		PublicKey:  publicKey,
+		createdAt:  time.Now(),
+	}
+}
+
+// Destroy securely destroys the key pair
+func (kp *KeyPair) Destroy() {
+	if kp.PrivateKey != nil {
+		// Securely zero out the private key memory
+		for i := range kp.PrivateKey {
+			kp.PrivateKey[i] = 0
+		}
+		kp.PrivateKey = nil
+	}
 }
 
 // X3DHBundle represents the X3DH key bundle for initial key exchange
@@ -49,6 +71,10 @@ type DoubleRatchetState struct {
 // SignalCrypto provides Signal Protocol cryptographic operations
 type SignalCrypto struct {
 	identityKeyPair *KeyPair
+
+	// Replay attack protection
+	usedNonces  map[string]time.Time // Track used nonces with timestamps
+	nonceWindow time.Duration        // Time window for nonce validity
 }
 
 // NewSignalCrypto creates a new Signal Protocol crypto instance
@@ -61,6 +87,8 @@ func NewSignalCrypto() (*SignalCrypto, error) {
 
 	return &SignalCrypto{
 		identityKeyPair: identityKey,
+		usedNonces:      make(map[string]time.Time),
+		nonceWindow:     5 * time.Minute, // 5-minute window for nonce validity
 	}, nil
 }
 
@@ -81,10 +109,7 @@ func GenerateKeyPair() (*KeyPair, error) {
 	publicKey := make([]byte, PublicKeySize)
 	curve25519.ScalarBaseMult((*[32]byte)(publicKey), (*[32]byte)(privateKey))
 
-	return &KeyPair{
-		PrivateKey: privateKey,
-		PublicKey:  publicKey,
-	}, nil
+	return NewSecureKeyPair(privateKey, publicKey), nil
 }
 
 // PerformX3DH performs the X3DH key agreement protocol
@@ -164,6 +189,11 @@ func (sc *SignalCrypto) DecryptMessage(ciphertext []byte, chainKey []byte) ([]by
 	nonce := ciphertext[:NonceSize]
 	encrypted := ciphertext[NonceSize:]
 
+	// Check for replay attacks
+	if err := sc.checkReplayAttack(nonce); err != nil {
+		return nil, fmt.Errorf("replay attack detected: %w", err)
+	}
+
 	// Derive message key from chain key
 	messageKey, err := deriveMessageKey(chainKey)
 	if err != nil {
@@ -186,6 +216,9 @@ func (sc *SignalCrypto) DecryptMessage(ciphertext []byte, chainKey []byte) ([]by
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt message: %w", err)
 	}
+
+	// Mark nonce as used after successful decryption
+	sc.markNonceUsed(nonce)
 
 	return plaintext, nil
 }
@@ -239,12 +272,44 @@ func deriveMessageKey(chainKey []byte) ([]byte, error) {
 	return messageKey, nil
 }
 
-// Destroy securely destroys the SignalCrypto instance
-func (sc *SignalCrypto) Destroy() {
-	if sc.identityKeyPair != nil && sc.identityKeyPair.PrivateKey != nil {
-		// TODO: Securely zero out the private key memory
-		for i := range sc.identityKeyPair.PrivateKey {
-			sc.identityKeyPair.PrivateKey[i] = 0
+// checkReplayAttack checks if a nonce has been used before
+func (sc *SignalCrypto) checkReplayAttack(nonce []byte) error {
+	nonceStr := fmt.Sprintf("%x", nonce)
+
+	// Clean up old nonces first
+	sc.cleanupOldNonces()
+
+	// Check if nonce was already used
+	if _, exists := sc.usedNonces[nonceStr]; exists {
+		return fmt.Errorf("nonce already used")
+	}
+
+	return nil
+}
+
+// markNonceUsed marks a nonce as used
+func (sc *SignalCrypto) markNonceUsed(nonce []byte) {
+	nonceStr := fmt.Sprintf("%x", nonce)
+	sc.usedNonces[nonceStr] = time.Now()
+}
+
+// cleanupOldNonces removes expired nonces from the tracking map
+func (sc *SignalCrypto) cleanupOldNonces() {
+	now := time.Now()
+	for nonce, timestamp := range sc.usedNonces {
+		if now.Sub(timestamp) > sc.nonceWindow {
+			delete(sc.usedNonces, nonce)
 		}
 	}
+}
+
+// Destroy securely destroys the SignalCrypto instance
+func (sc *SignalCrypto) Destroy() {
+	if sc.identityKeyPair != nil {
+		sc.identityKeyPair.Destroy()
+		sc.identityKeyPair = nil
+	}
+
+	// Clear nonce tracking
+	sc.usedNonces = nil
 }

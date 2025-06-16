@@ -71,9 +71,16 @@ var startCmd = &cobra.Command{
 
 This command starts the P2P node and provides an interactive chat interface
 where you can send messages to connected peers and see incoming messages.
-Use commands like /help, /peers, /connect, /quit to control the chat.`,
+Use commands like /help, /peers, /connect, /quit to control the chat.
+
+Use --daemon flag to run as background service.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		runInteractiveChat(cmd, args)
+		daemon, _ := cmd.Flags().GetBool("daemon")
+		if daemon {
+			runDaemonMode(cmd, args)
+		} else {
+			runInteractiveChat(cmd, args)
+		}
 	},
 }
 
@@ -271,6 +278,9 @@ func init() {
 	// Global flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.xelvra/config.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
+
+	// Start command flags
+	startCmd.Flags().Bool("daemon", false, "run as background daemon service")
 
 	// Add subcommands
 	rootCmd.AddCommand(initCmd)
@@ -1421,4 +1431,71 @@ func getStatusIcon(active bool) string {
 		return "✅ Active"
 	}
 	return "❌ Inactive"
+}
+
+// runDaemonMode runs the P2P node as a background daemon
+func runDaemonMode(cmd *cobra.Command, args []string) {
+	fmt.Println("🔧 Starting Xelvra P2P Messenger in daemon mode...")
+	fmt.Printf("Version: %s\n", version)
+	fmt.Println("📝 All logs will be written to ~/.xelvra/peerchat.log")
+	fmt.Println()
+
+	// Create P2P wrapper
+	ctx := context.Background()
+	wrapper := p2p.NewP2PWrapper(ctx, false) // Try real P2P first
+
+	fmt.Println("🔧 Initializing P2P node...")
+	if err := wrapper.Start(); err != nil {
+		fmt.Printf("❌ Failed to start P2P node: %v\n", err)
+		return
+	}
+	defer func() {
+		if err := wrapper.Stop(); err != nil {
+			fmt.Printf("Warning: Failed to stop wrapper: %v\n", err)
+		}
+	}()
+
+	// Get node information
+	nodeInfo := wrapper.GetNodeInfo()
+
+	fmt.Println("✅ P2P node started successfully!")
+	fmt.Printf("🆔 Your Peer ID: %s\n", nodeInfo.PeerID)
+	fmt.Printf("🌐 Your DID: %s\n", nodeInfo.DID)
+	fmt.Printf("📡 Listening on: %v\n", nodeInfo.ListenAddrs)
+	fmt.Println()
+
+	if wrapper.IsUsingSimulation() {
+		fmt.Println("⚠️  Note: Using simulation mode (real P2P failed to start)")
+	} else {
+		fmt.Println("✅ Using real P2P networking")
+	}
+
+	fmt.Println("🔧 Running in daemon mode - no interactive interface")
+	fmt.Println("📝 Monitor logs: tail -f ~/.xelvra/peerchat.log")
+	fmt.Println("📊 Check status: peerchat-cli status")
+	fmt.Println("🛑 Stop daemon: peerchat-cli stop")
+	fmt.Println()
+
+	// Set up signal handling for graceful shutdown
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+
+	// Daemon loop - just wait for signals
+	for {
+		select {
+		case sig := <-sigChan:
+			switch sig {
+			case syscall.SIGHUP:
+				fmt.Println("📡 Received SIGHUP - reloading configuration...")
+				// TODO: Implement configuration reload
+			case syscall.SIGINT, syscall.SIGTERM:
+				fmt.Println("\n🛑 Shutdown signal received, stopping daemon...")
+				fmt.Println("✅ Daemon stopped successfully")
+				return
+			}
+		default:
+			// Sleep to prevent busy waiting
+			time.Sleep(1 * time.Second)
+		}
+	}
 }

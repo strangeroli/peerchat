@@ -1,0 +1,38 @@
+[Unit]
+Description=Xelvra P2P Messenger Service
+Documentation=https://github.com/Xelvra/peerchat
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=xelvra
+Group=xelvra
+WorkingDirectory=/opt/xelvra
+ExecStart=/opt/xelvra/bin/peerchat-cli start --daemon
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/opt/xelvra/bin/peerchat-cli stop
+Restart=always
+RestartSec=10
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/xelvra /var/lib/xelvra
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=100M
+CPUQuota=50%
+
+# Environment
+Environment=XELVRA_CONFIG_DIR=/var/lib/xelvra
+Environment=XELVRA_LOG_LEVEL=info
+
+[Install]
+WantedBy=multi-user.target

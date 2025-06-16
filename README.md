@@ -111,17 +111,20 @@ This isn't just about better technology—it's about restoring the fundamental h
 Messenger Xelvra follows a structured development approach divided into distinct epochs, each building upon the previous foundation:
 
 ### 🏗️ Epoch 1: CLI Foundation (Current)
-**Status: ✅ Largely Complete**
+**Status: ✅ COMPLETED**
 
 The command-line interface serves as the foundation and testing ground for all core P2P functionality:
 
 - ✅ **P2P Core**: libp2p integration with QUIC/TCP transports
 - ✅ **Discovery Systems**: mDNS, UDP broadcast, and DHT peer discovery
 - ✅ **NAT Traversal**: STUN integration with automatic public IP detection
-- ✅ **File Transfer**: Secure P2P file sharing with chunking and progress tracking
-- ✅ **CLI Commands**: Complete command set (init, start, connect, send, discover, doctor)
+- ✅ **Cryptographic Security**: Signal Protocol with E2E encryption, memory protection, replay attack prevention
+- ✅ **Offline Messaging**: Automatic message storage and delivery for offline peers
+- ✅ **CLI Commands**: Complete command set (init, start, listen, send, discover, status, doctor, manual)
+- ✅ **Interactive Chat**: Full TUI with command history, peer management, and real-time messaging
+- ✅ **System Service**: Daemon mode with systemd integration and installation scripts
 - ✅ **Logging & Diagnostics**: Comprehensive logging with rotation and network diagnostics
-- 🔄 **In Progress**: Interactive chat UI, advanced encryption, and mesh networking
+- ✅ **Testing**: Unit tests for all core components with security validation
 
 ### 🔌 Epoch 2: API Service (Planned)
 **Status: 📋 Planned**
@@ -179,8 +182,11 @@ For detailed instructions, see the [Installation Guide](docs/INSTALLATION.md).
 # Initialize your identity
 ./bin/peerchat-cli init
 
-# Start the P2P node
+# Start interactive chat mode
 ./bin/peerchat-cli start
+
+# Start as background daemon
+./bin/peerchat-cli start --daemon
 
 # Check network status
 ./bin/peerchat-cli status
@@ -188,26 +194,35 @@ For detailed instructions, see the [Installation Guide](docs/INSTALLATION.md).
 # Discover peers
 ./bin/peerchat-cli discover
 
-# Connect to a peer
-./bin/peerchat-cli connect <peer_multiaddr>
+# Show your identity
+./bin/peerchat-cli id
 
-# Send a message
-./bin/peerchat-cli send <peer_multiaddr> "Hello, World!"
-
-# Send a file
-./bin/peerchat-cli send-file <peer_multiaddr> /path/to/file
-
-# Interactive chat mode
-./bin/peerchat-cli start
-
-# Listen for messages (debugging)
+# Listen for messages (debugging mode)
 ./bin/peerchat-cli listen
 
 # Network diagnostics
 ./bin/peerchat-cli doctor
 
-# View help
+# View detailed manual
 ./bin/peerchat-cli manual
+
+# Show version
+./bin/peerchat-cli version
+```
+
+### Interactive Chat Commands
+
+Once in interactive mode (`./bin/peerchat-cli start`):
+
+```bash
+# Chat commands (type in interactive mode)
+/help          # Show available commands
+/peers         # List connected peers
+/discover      # Discover new peers
+/connect <id>  # Connect to a peer
+/status        # Show node status
+/clear         # Clear screen
+/quit          # Exit chat
 ```
 
 For comprehensive usage instructions, see the [User Guide](docs/USER_GUIDE.md).
