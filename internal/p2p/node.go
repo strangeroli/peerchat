@@ -15,13 +15,13 @@ import (
 	"github.com/Xelvra/peerchat/internal/message"
 	"github.com/Xelvra/peerchat/internal/user"
 	libp2p "github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p-kad-dht/dual"
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	"github.com/libp2p/go-libp2p/core/routing"
-	"github.com/libp2p/go-libp2p-kad-dht/dual"
 	libp2pquic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/sirupsen/logrus"
@@ -110,6 +110,7 @@ type PeerChatNode struct {
 	// Network components
 	stunClient       *STUNClient
 	discoveryManager *DiscoveryManager
+	energyManager    *EnergyManager
 	natInfo          *NATInfo
 }
 
@@ -173,7 +174,7 @@ func NewPeerChatNode(ctx context.Context, config *NodeConfig) (*PeerChatNode, er
 	opts := []libp2p.Option{
 		libp2p.Identity(privKey),
 		libp2p.ListenAddrStrings(config.ListenAddrs...),
-		libp2p.Ping(false), // Disable built-in ping to save resources
+		libp2p.Ping(false),   // Disable built-in ping to save resources
 		libp2p.EnableRelay(), // Enable relay for NAT traversal (basic relay support)
 		libp2p.Routing(func(h host.Host) (routing.PeerRouting, error) {
 			// Create DHT for routing
@@ -227,6 +228,7 @@ func NewPeerChatNode(ctx context.Context, config *NodeConfig) (*PeerChatNode, er
 	// Create network components
 	node.stunClient = NewSTUNClient(logger)
 	node.discoveryManager = NewDiscoveryManager(h, logger)
+	node.energyManager = NewEnergyManager(nodeCtx, logger)
 
 	// Create message manager
 	node.messageManager = message.NewMessageManager(h, identity, logger)
@@ -271,6 +273,12 @@ func (n *PeerChatNode) Start() error {
 	n.logger.Debug("Starting NAT discovery...")
 	go n.discoverNAT()
 
+	// Start energy management
+	n.logger.Debug("Starting energy management...")
+	if err := n.energyManager.Start(); err != nil {
+		n.logger.WithError(err).Warn("Failed to start energy management")
+	}
+
 	// Start peer discovery
 	n.logger.Debug("Starting peer discovery...")
 	if err := n.discoveryManager.Start(); err != nil {
@@ -290,6 +298,13 @@ func (n *PeerChatNode) Start() error {
 // Stop gracefully shuts down the P2P node
 func (n *PeerChatNode) Stop() error {
 	n.logger.Info("Stopping PeerChatNode...")
+
+	// Stop energy manager
+	if n.energyManager != nil {
+		if err := n.energyManager.Stop(); err != nil {
+			n.logger.WithError(err).Error("Failed to stop energy manager")
+		}
+	}
 
 	// Stop discovery manager
 	if n.discoveryManager != nil {
@@ -361,6 +376,21 @@ func (n *PeerChatNode) SendFile(peerID peer.ID, filePath string) error {
 // GetIdentity returns the node's identity
 func (n *PeerChatNode) GetIdentity() *user.MessengerID {
 	return n.identity
+}
+
+// GetEnergyProfile returns the current energy profile
+func (n *PeerChatNode) GetEnergyProfile() *EnergyProfile {
+	if n.energyManager != nil {
+		return n.energyManager.GetEnergyProfile()
+	}
+	return nil
+}
+
+// SetBatteryLevel updates the battery level for energy optimization
+func (n *PeerChatNode) SetBatteryLevel(level float64) {
+	if n.energyManager != nil {
+		n.energyManager.SetBatteryLevel(level)
+	}
 }
 
 // GetStats returns basic node statistics

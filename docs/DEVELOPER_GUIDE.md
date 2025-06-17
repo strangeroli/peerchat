@@ -156,11 +156,11 @@ Provides a high-level interface with:
 - Configuration management
 
 ### Discovery Manager (`internal/p2p/discovery.go`)
-Implements peer discovery using:
-- **mDNS**: Local network multicast discovery
-- **UDP Broadcast**: Network broadcast for peer finding
-- **DHT**: Distributed hash table (planned)
-- **Bootstrap**: Known peer connections (planned)
+Implements hierarchical peer discovery using:
+- **Local Discovery**: mDNS and UDP broadcast for immediate local network peers
+- **Global Discovery**: Kademlia DHT for distributed peer finding
+- **LRU Caching**: Intelligent local peer caching for performance optimization
+- **Bootstrap**: IPFS-compatible bootstrap peers for DHT initialization
 
 ### Message Manager (`internal/message/manager.go`)
 Handles message routing with:

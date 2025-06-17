@@ -20,14 +20,14 @@ func main() {
 // Execute adds all child commands to the root command and sets flags appropriately.
 func Execute() {
 	rootCmd := cli.CreateRootCommand(version)
-	
+
 	// Add global flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.xelvra/config.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	
+
 	// Initialize configuration
 	cobra.OnInitialize(initConfig)
-	
+
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

@@ -84,11 +84,14 @@ This isn't just about better technology—it's about restoring the fundamental h
 
 ### 🔐 Security & Privacy
 - **Signal Protocol Implementation**: Industry-standard end-to-end encryption with X3DH handshake and Double Ratchet
+- **Proof-of-Work Identity**: Sybil-resistant DID creation with configurable difficulty for network protection
+- **Hierarchical Trust System**: Ghost → User → Architect → Ambassador → God reputation levels with automatic promotion
 - **Forward Secrecy**: Automatic key rotation ensures past communications remain secure even if current keys are compromised
 - **Metadata Protection**: Onion routing obfuscates communication patterns and network analysis
 - **Zero-Knowledge Architecture**: No personal data stored on external servers
 
 ### 🌐 Decentralized Network
+- **Hierarchical Discovery**: Local-first (mDNS, UDP broadcast) then global (DHT) with intelligent LRU caching
 - **Hybrid P2P Model**: Direct peer connections with intelligent relay fallback
 - **Multiple Discovery Methods**: Kademlia DHT, mDNS, UDP broadcast, and mesh networking
 - **NAT Traversal**: Automatic hole-punching, STUN/TURN integration, and port-knocking for restrictive networks
@@ -97,7 +100,8 @@ This isn't just about better technology—it's about restoring the fundamental h
 ### ⚡ Performance & Efficiency
 - **QUIC Transport**: Ultra-low latency communication with TCP fallback
 - **Resource Optimization**: <20MB memory usage, <1% CPU in idle mode
-- **Energy Efficient**: <15mW power consumption on mobile devices
+- **Energy Optimization**: Adaptive polling, deep sleep mode, battery-aware operations
+- **Smart Power Management**: <15mW power consumption with automatic energy profiling
 - **AI-Driven Routing**: Machine learning optimization for intelligent transport selection
 
 ### 🛠️ Developer Friendly
@@ -111,14 +115,17 @@ This isn't just about better technology—it's about restoring the fundamental h
 Messenger Xelvra follows a structured development approach divided into distinct epochs, each building upon the previous foundation:
 
 ### 🏗️ Epoch 1: CLI Foundation (Current)
-**Status: ✅ COMPLETED**
+**Status: ✅ COMPLETED + 🚀 ENHANCED**
 
 The command-line interface serves as the foundation and testing ground for all core P2P functionality:
 
 - ✅ **P2P Core**: libp2p integration with QUIC/TCP transports
-- ✅ **Discovery Systems**: mDNS, UDP broadcast, and DHT peer discovery
+- ✅ **Hierarchical Discovery**: Local (mDNS, UDP broadcast) + Global (DHT) with LRU caching
 - ✅ **NAT Traversal**: STUN integration with automatic public IP detection
 - ✅ **Cryptographic Security**: Signal Protocol with E2E encryption, memory protection, replay attack prevention
+- 🚀 **Proof-of-Work DID**: Sybil-resistant identity creation with configurable difficulty
+- 🚀 **Hierarchical Reputation**: Ghost → User → Architect → Ambassador → God trust system
+- 🚀 **Energy Optimization**: Adaptive polling, deep sleep mode, battery-aware operations
 - ✅ **Offline Messaging**: Automatic message storage and delivery for offline peers
 - ✅ **CLI Commands**: Complete command set (init, start, listen, send, discover, status, doctor, manual)
 - ✅ **Interactive Chat**: Full TUI with command history, peer management, and real-time messaging
