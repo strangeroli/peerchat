@@ -1,7 +1,0 @@
-linters:
-  enable:
-    - gofmt
-    - goimports
-    - govet
-    - ineffassign
-    - misspell

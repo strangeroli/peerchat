@@ -79,3 +79,4 @@ release/
 # Development files
 TODO.md
 web/
+tmp/

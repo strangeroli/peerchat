@@ -10,6 +10,8 @@ import (
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/p2p/discovery/mdns"
+	"github.com/libp2p/go-libp2p-kad-dht/dual"
+	drouting "github.com/libp2p/go-libp2p/p2p/discovery/routing"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	"github.com/sirupsen/logrus"
 )
@@ -22,7 +24,12 @@ type DiscoveryManager struct {
 	cancel context.CancelFunc
 
 	// Discovery methods
-	mdnsService mdns.Service
+	mdnsService     mdns.Service
+	dht             *dual.DHT
+	routingDiscovery *drouting.RoutingDiscovery
+
+	// Bootstrap peers for DHT
+	bootstrapPeers []peer.AddrInfo
 
 	// Status tracking
 	mu              sync.RWMutex
@@ -34,17 +41,21 @@ type DiscoveryManager struct {
 func NewDiscoveryManager(h host.Host, logger *logrus.Logger) *DiscoveryManager {
 	ctx, cancel := context.WithCancel(context.Background())
 
+	// Define bootstrap peers for DHT
+	bootstrapPeers := getBootstrapPeers()
+
 	return &DiscoveryManager{
 		host:            h,
 		logger:          logger,
 		ctx:             ctx,
 		cancel:          cancel,
+		bootstrapPeers:  bootstrapPeers,
 		discoveredPeers: make(map[peer.ID]*peer.AddrInfo),
 		status: &DiscoveryStatus{
 			MDNSActive:     false,
 			DHTActive:      false,
 			UDPBroadcast:   false,
-			BootstrapPeers: []string{},
+			BootstrapPeers: make([]string, len(bootstrapPeers)),
 			KnownPeers:     0,
 			LastDiscovery:  time.Now(),
 		},
@@ -71,8 +82,15 @@ func (dm *DiscoveryManager) Start() error {
 	dm.status.UDPBroadcast = true
 	dm.mu.Unlock()
 
-	// TODO: Start DHT discovery
-	// TODO: Connect to bootstrap peers
+	// Start DHT discovery
+	if err := dm.startDHT(); err != nil {
+		dm.logger.WithError(err).Warn("Failed to start DHT discovery")
+	} else {
+		dm.mu.Lock()
+		dm.status.DHTActive = true
+		dm.mu.Unlock()
+		dm.logger.Info("DHT discovery started")
+	}
 
 	dm.logger.Info("Peer discovery started successfully")
 	return nil
@@ -87,6 +105,12 @@ func (dm *DiscoveryManager) Stop() error {
 	if dm.mdnsService != nil {
 		if err := dm.mdnsService.Close(); err != nil {
 			dm.logger.WithError(err).Warn("Failed to close mDNS service")
+		}
+	}
+
+	if dm.dht != nil {
+		if err := dm.dht.Close(); err != nil {
+			dm.logger.WithError(err).Warn("Failed to close DHT")
 		}
 	}
 
@@ -310,3 +334,216 @@ func (n *discoveryNotifee) HandlePeerFound(pi peer.AddrInfo) {
 		n.dm.logger.WithField("peer_id", pi.ID.String()).Info("Successfully connected to discovered peer")
 	}
 }
+
+// getBootstrapPeers returns a list of bootstrap peers for DHT
+func getBootstrapPeers() []peer.AddrInfo {
+	// Use IPFS bootstrap peers as they run compatible DHT and relay services
+	bootstrapAddrs := []string{
+		"/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN",
+		"/dnsaddr/bootstrap.libp2p.io/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa",
+		"/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zp9FCS47PpbUANZBTokb6BPWjkp8Bk",
+		"/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt",
+		// Additional relay servers for better NAT traversal
+		"/ip4/147.75.77.187/tcp/4001/p2p/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa",
+		"/ip4/147.75.195.153/tcp/4001/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt",
+	}
+
+	var bootstrapPeers []peer.AddrInfo
+	for _, addrStr := range bootstrapAddrs {
+		addr, err := multiaddr.NewMultiaddr(addrStr)
+		if err != nil {
+			continue
+		}
+
+		peerInfo, err := peer.AddrInfoFromP2pAddr(addr)
+		if err != nil {
+			continue
+		}
+
+		bootstrapPeers = append(bootstrapPeers, *peerInfo)
+	}
+
+	return bootstrapPeers
+}
+
+// startDHT initializes and starts the DHT for peer discovery
+func (dm *DiscoveryManager) startDHT() error {
+	dm.logger.Info("Starting DHT for global peer discovery...")
+
+	// Create DHT with bootstrap peers
+	dht, err := dual.New(dm.ctx, dm.host)
+	if err != nil {
+		return fmt.Errorf("failed to create DHT: %w", err)
+	}
+
+	dm.dht = dht
+
+	// Bootstrap the DHT
+	if err := dm.dht.Bootstrap(dm.ctx); err != nil {
+		dm.logger.WithError(err).Warn("DHT bootstrap failed, continuing anyway")
+	}
+
+	// Connect to bootstrap peers
+	go dm.connectToBootstrapPeers()
+
+	// Create routing discovery
+	dm.routingDiscovery = drouting.NewRoutingDiscovery(dm.dht)
+
+	// Start advertising our presence
+	go dm.advertisePresence()
+
+	// Start discovering peers via DHT
+	go dm.discoverViaDHT()
+
+	dm.logger.WithFields(logrus.Fields{
+		"bootstrap_peers": len(dm.bootstrapPeers),
+	}).Info("DHT started successfully for global peer discovery")
+
+	return nil
+}
+
+// connectToBootstrapPeers connects to bootstrap peers for DHT
+func (dm *DiscoveryManager) connectToBootstrapPeers() {
+		dm.logger.Info("Connecting to bootstrap peers...")
+
+		connected := 0
+		for _, peerInfo := range dm.bootstrapPeers {
+			ctx, cancel := context.WithTimeout(dm.ctx, 10*time.Second)
+
+			if err := dm.host.Connect(ctx, peerInfo); err != nil {
+				dm.logger.WithError(err).WithField("peer_id", peerInfo.ID.String()).Debug("Failed to connect to bootstrap peer")
+			} else {
+				dm.logger.WithField("peer_id", peerInfo.ID.String()).Info("Connected to bootstrap peer")
+				connected++
+			}
+
+			cancel()
+		}
+
+		dm.logger.WithFields(logrus.Fields{
+			"connected": connected,
+			"total":     len(dm.bootstrapPeers),
+		}).Info("Bootstrap peer connection completed")
+
+		// Update status
+		dm.mu.Lock()
+		for i, peer := range dm.bootstrapPeers {
+			if i < len(dm.status.BootstrapPeers) {
+				dm.status.BootstrapPeers[i] = peer.ID.String()
+			}
+		}
+		dm.mu.Unlock()
+	}
+
+	// advertisePresence advertises our presence in the DHT
+	func (dm *DiscoveryManager) advertisePresence() {
+		if dm.routingDiscovery == nil {
+			return
+		}
+
+		ticker := time.NewTicker(5 * time.Minute) // Advertise every 5 minutes
+		defer ticker.Stop()
+
+		// Advertise immediately
+		dm.doAdvertise()
+
+		for {
+			select {
+			case <-dm.ctx.Done():
+				return
+			case <-ticker.C:
+				dm.doAdvertise()
+			}
+		}
+	}
+
+	// doAdvertise performs the actual advertisement
+	func (dm *DiscoveryManager) doAdvertise() {
+		ctx, cancel := context.WithTimeout(dm.ctx, 30*time.Second)
+		defer cancel()
+
+		// Advertise with Xelvra namespace
+		_, err := dm.routingDiscovery.Advertise(ctx, "xelvra-p2p")
+		if err != nil {
+			dm.logger.WithError(err).Debug("Failed to advertise presence in DHT")
+		} else {
+			dm.logger.Debug("Successfully advertised presence in DHT")
+		}
+	}
+
+	// discoverViaDHT discovers peers using DHT
+	func (dm *DiscoveryManager) discoverViaDHT() {
+		if dm.routingDiscovery == nil {
+			return
+		}
+
+		ticker := time.NewTicker(2 * time.Minute) // Discover every 2 minutes
+		defer ticker.Stop()
+
+		// Discover immediately after a short delay to allow DHT to bootstrap
+		time.Sleep(30 * time.Second)
+		dm.doDHTDiscovery()
+
+		for {
+			select {
+			case <-dm.ctx.Done():
+				return
+			case <-ticker.C:
+				dm.doDHTDiscovery()
+			}
+		}
+	}
+
+	// doDHTDiscovery performs the actual DHT peer discovery
+	func (dm *DiscoveryManager) doDHTDiscovery() {
+		ctx, cancel := context.WithTimeout(dm.ctx, 60*time.Second)
+		defer cancel()
+
+		dm.logger.Debug("Discovering peers via DHT...")
+
+		// Find peers advertising the Xelvra namespace
+		peerChan, err := dm.routingDiscovery.FindPeers(ctx, "xelvra-p2p")
+		if err != nil {
+			dm.logger.WithError(err).Debug("Failed to start DHT peer discovery")
+			return
+		}
+
+		discovered := 0
+		for peerInfo := range peerChan {
+			// Skip ourselves
+			if peerInfo.ID == dm.host.ID() {
+				continue
+			}
+
+			dm.logger.WithFields(logrus.Fields{
+				"peer_id": peerInfo.ID.String(),
+				"addrs":   peerInfo.Addrs,
+			}).Info("Discovered peer via DHT")
+
+			// Store discovered peer
+			dm.mu.Lock()
+			dm.discoveredPeers[peerInfo.ID] = &peerInfo
+			dm.status.LastDiscovery = time.Now()
+			dm.mu.Unlock()
+
+			// Try to connect to the discovered peer
+			go func(pi peer.AddrInfo) {
+				connectCtx, connectCancel := context.WithTimeout(context.Background(), 15*time.Second)
+				defer connectCancel()
+
+				if err := dm.host.Connect(connectCtx, pi); err != nil {
+					dm.logger.WithError(err).WithField("peer_id", pi.ID.String()).Debug("Failed to connect to DHT-discovered peer")
+				} else {
+					dm.logger.WithField("peer_id", pi.ID.String()).Info("Successfully connected to DHT-discovered peer")
+				}
+			}(peerInfo)
+
+			discovered++
+		}
+
+		if discovered > 0 {
+			dm.logger.WithField("discovered", discovered).Info("DHT peer discovery completed")
+		} else {
+			dm.logger.Debug("No new peers discovered via DHT")
+		}
+	}

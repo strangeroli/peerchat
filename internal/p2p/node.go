@@ -20,6 +20,8 @@ import (
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
+	"github.com/libp2p/go-libp2p/core/routing"
+	"github.com/libp2p/go-libp2p-kad-dht/dual"
 	libp2pquic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	"github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/sirupsen/logrus"
@@ -171,8 +173,16 @@ func NewPeerChatNode(ctx context.Context, config *NodeConfig) (*PeerChatNode, er
 	opts := []libp2p.Option{
 		libp2p.Identity(privKey),
 		libp2p.ListenAddrStrings(config.ListenAddrs...),
-		libp2p.Ping(false),    // Disable built-in ping to save resources
-		libp2p.DisableRelay(), // Start without relay for direct connections
+		libp2p.Ping(false), // Disable built-in ping to save resources
+		libp2p.EnableRelay(), // Enable relay for NAT traversal (basic relay support)
+		libp2p.Routing(func(h host.Host) (routing.PeerRouting, error) {
+			// Create DHT for routing
+			dht, err := dual.New(nodeCtx, h)
+			if err != nil {
+				return nil, err
+			}
+			return dht, nil
+		}),
 	}
 
 	// Add TCP transport

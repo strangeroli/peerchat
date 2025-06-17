@@ -126,7 +126,11 @@ func NewMessageManager(h host.Host, identity *user.MessengerID, logger *logrus.L
 	// Create offline messages directory
 	homeDir, _ := os.UserHomeDir()
 	offlineDir := filepath.Join(homeDir, ".xelvra", "offline_messages")
-	os.MkdirAll(offlineDir, 0700)
+	if err := os.MkdirAll(offlineDir, 0700); err != nil {
+		logger.WithError(err).Error("Failed to create offline messages directory")
+		// Continue with empty offline directory path
+		offlineDir = ""
+	}
 
 	mm := &MessageManager{
 		host:                h,
@@ -779,7 +783,11 @@ func (mm *MessageManager) deliverOfflineMessage(peerID peer.ID, offlineMsg *Offl
 	if err != nil {
 		return fmt.Errorf("failed to open stream: %w", err)
 	}
-	defer stream.Close()
+	defer func() {
+		if err := stream.Close(); err != nil {
+			mm.logger.WithError(err).Error("Failed to close stream")
+		}
+	}()
 
 	// Serialize and send the message
 	msgData, err := json.Marshal(offlineMsg.Message)
