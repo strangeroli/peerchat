@@ -5,9 +5,9 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Go Version](https://img.shields.io/badge/Go-1.19+-blue.svg)](https://golang.org)
 
-> 🚀 **Secure, decentralized P2P messenger. Your conversations, your control.**
+> 🚀 **Secure, decentralized P2P messenger. Built on E2E encryption with AI-driven net prediction.**
 
-**Messenger Xelvra** is a peer-to-peer communication platform that puts privacy and user control first. No servers, no data collection, no censorship - just direct, encrypted communication between you and your contacts.
+**Messenger Xelvra** is a peer-to-peer (P2P) communication platform designed to restore privacy, security, and user control over digital communication. The project aims to create a secure, efficient, and decentralized platform that pushes the boundaries of P2P communication capabilities.
 
 ## 📋 Table of Contents
 
