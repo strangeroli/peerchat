@@ -20,7 +20,7 @@ func TestCLIVersion(t *testing.T) {
 	if !strings.Contains(outputStr, "Xelvra P2P Messenger CLI") {
 		t.Errorf("Version output doesn't contain expected text. Got: %s", outputStr)
 	}
-	if !strings.Contains(outputStr, "v0.2.0-alpha") {
+	if !strings.Contains(outputStr, "v0.3.0-alpha") {
 		t.Errorf("Version output doesn't contain version number. Got: %s", outputStr)
 	}
 }

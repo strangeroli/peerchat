@@ -156,11 +156,46 @@ Provides a high-level interface with:
 - Configuration management
 
 ### Discovery Manager (`internal/p2p/discovery.go`)
-Implements hierarchical peer discovery using:
-- **Local Discovery**: mDNS and UDP broadcast for immediate local network peers
-- **Global Discovery**: Kademlia DHT for distributed peer finding
-- **LRU Caching**: Intelligent local peer caching for performance optimization
-- **Bootstrap**: IPFS-compatible bootstrap peers for DHT initialization
+Implements 6-phase hierarchical peer discovery protocol:
+
+**Phase 1: IPv6 Link-Local Discovery**
+- Immediate discovery using IPv6 multicast (ff02::1)
+- Highest priority for same-link peers
+- Zero-configuration local network discovery
+
+**Phase 2: mDNS Discovery**
+- Multicast DNS for local network discovery
+- Service name: "xelvra-p2p"
+- Automatic peer advertisement and discovery
+
+**Phase 3: UDP Broadcast Discovery**
+- Network broadcast on port 42424
+- Fallback for networks without mDNS support
+- Cross-subnet discovery capability
+
+**Phase 4: DHT Global Discovery**
+- Kademlia distributed hash table
+- IPFS-compatible bootstrap peers
+- Global peer discovery and routing
+
+**Phase 5: NAT Hole Punching**
+- Multi-strategy NAT traversal:
+  - Direct connection attempts
+  - Relay-assisted hole punching
+  - Simultaneous open coordination
+- Automatic retry with different strategies
+
+**Phase 6: Relay Server Management**
+- Automatic relay need assessment
+- Connection to existing relay servers
+- Dynamic relay server creation
+- Fallback for restrictive networks
+
+**Additional Features:**
+- **LRU Caching**: 100-peer local cache with intelligent eviction
+- **Smart Routing**: Automatic local vs. remote peer detection
+- **Connection Prioritization**: Local peers prioritized over remote
+- **Relay Capability Assessment**: Automatic evaluation for relay service
 
 ### Message Manager (`internal/message/manager.go`)
 Handles message routing with:
@@ -170,11 +205,50 @@ Handles message routing with:
 - Message type handling
 
 ### Identity Manager (`internal/user/identity.go`)
-Manages user identity:
-- DID (Decentralized Identifier) generation
-- Cryptographic key management
-- Identity verification
-- Profile management
+Enhanced identity system with Sybil resistance:
+
+**Proof-of-Work Features:**
+- **Configurable Difficulty**: Default 4 leading zeros, adjustable 1-32
+- **Computational Proof**: SHA256-based proof-of-work for identity creation
+- **Automatic Validation**: All identities verified on network entry
+- **Memory Protection**: Secure key handling with memory locking
+
+**DID Generation:**
+- **Legacy Support**: Maintains compatibility with existing DIDs
+- **PoW-Enhanced**: New DIDs include proof-of-work validation
+- **Format**: `did:xelvra:<base58-encoded-hash>`
+- **Validation**: Automatic PoW verification for all new identities
+
+### Reputation Manager (`internal/user/reputation.go`)
+Implements hierarchical trust and reputation system:
+
+**Trust Levels:**
+1. **Ghost (Level 0)**: New users - 5 msg/day, 1 msg/minute
+2. **User (Level 1)**: Verified users - 100 msg/day, 1 msg/5sec
+3. **Architect (Level 2)**: Contributors - 500 msg/day, 1 msg/sec
+4. **Ambassador (Level 3)**: Leaders - 1000 msg/day, 500ms
+5. **God (Level 4)**: Core developers - unlimited
+
+**Reputation Mechanics:**
+- Message sending: +1 point, File sharing: +5 points
+- Online time: +2 points/hour, Verification: +50 points
+- Behavioral metrics: reliability, responsiveness, helpfulness
+- Automatic promotion based on merit and time requirements
+
+### Energy Manager (`internal/p2p/energy.go`)
+Battery-aware optimization strategies:
+
+**Core Features:**
+- **Adaptive Polling**: DHT/heartbeat intervals adjust to battery level
+- **Deep Sleep Mode**: Ultra-low power at <15% battery
+- **Resource Monitoring**: Real-time CPU/memory tracking
+- **Performance Targets**: <20MB memory, <1% CPU, <50ms latency
+
+**Battery Optimization:**
+- Full (>50%): Normal intervals
+- Medium (20-50%): Reduced polling
+- Low (<20%): Conservative mode
+- Critical (<15%): Deep sleep
 
 ## Building and Testing
 

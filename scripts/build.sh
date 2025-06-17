@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Project info
 PROJECT_NAME="peerchat"
-VERSION="0.2.0-alpha"
+VERSION="0.3.0-alpha"
 BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 

@@ -91,11 +91,11 @@ This isn't just about better technology—it's about restoring the fundamental h
 - **Zero-Knowledge Architecture**: No personal data stored on external servers
 
 ### 🌐 Decentralized Network
-- **Hierarchical Discovery**: Local-first (mDNS, UDP broadcast) then global (DHT) with intelligent LRU caching
-- **Hybrid P2P Model**: Direct peer connections with intelligent relay fallback
-- **Multiple Discovery Methods**: Kademlia DHT, mDNS, UDP broadcast, and mesh networking
-- **NAT Traversal**: Automatic hole-punching, STUN/TURN integration, and port-knocking for restrictive networks
-- **Offline Capability**: Local mesh networking via Bluetooth LE and Wi-Fi Direct
+- **6-Phase Hierarchical Discovery**: IPv6 link-local → mDNS → UDP broadcast → DHT → NAT hole punching → Relay servers
+- **Intelligent Connection Strategy**: Local-first approach with automatic fallback to global discovery and relay services
+- **Advanced NAT Traversal**: Multi-strategy hole punching (direct, relay-assisted, simultaneous-open) with automatic relay creation
+- **Smart Peer Caching**: LRU cache for local peers with automatic local/remote detection and prioritization
+- **Relay Network**: Automatic relay server assessment and deployment for restrictive network environments
 
 ### ⚡ Performance & Efficiency
 - **QUIC Transport**: Ultra-low latency communication with TCP fallback
@@ -120,7 +120,7 @@ Messenger Xelvra follows a structured development approach divided into distinct
 The command-line interface serves as the foundation and testing ground for all core P2P functionality:
 
 - ✅ **P2P Core**: libp2p integration with QUIC/TCP transports
-- ✅ **Hierarchical Discovery**: Local (mDNS, UDP broadcast) + Global (DHT) with LRU caching
+- ✅ **6-Phase Hierarchical Discovery**: IPv6 link-local → mDNS → UDP → DHT → Hole punching → Relay servers
 - ✅ **NAT Traversal**: STUN integration with automatic public IP detection
 - ✅ **Cryptographic Security**: Signal Protocol with E2E encryption, memory protection, replay attack prevention
 - 🚀 **Proof-of-Work DID**: Sybil-resistant identity creation with configurable difficulty
