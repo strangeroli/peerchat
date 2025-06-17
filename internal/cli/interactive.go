@@ -17,8 +17,14 @@ import (
 
 // RunInteractiveChat starts the P2P node with interactive chat
 func RunInteractiveChat(cmd *cobra.Command, args []string) {
+	// Get version from root command
+	version := cmd.Root().Version
+	if version == "" {
+		version = "unknown"
+	}
+
 	fmt.Println("🚀 Starting Xelvra P2P Messenger CLI")
-	fmt.Printf("Version: %s\n", "0.2.0-alpha")
+	fmt.Printf("Version: %s\n", version)
 	fmt.Println("💬 Interactive Chat Mode")
 	fmt.Println("📝 Logs are written to ~/.xelvra/peerchat.log")
 	fmt.Println()
@@ -157,8 +163,14 @@ func RunInteractiveChat(cmd *cobra.Command, args []string) {
 
 // RunDaemonMode runs the P2P node as a background daemon
 func RunDaemonMode(cmd *cobra.Command, args []string) {
+	// Get version from root command
+	version := cmd.Root().Version
+	if version == "" {
+		version = "unknown"
+	}
+
 	fmt.Println("🔧 Starting Xelvra P2P Messenger in daemon mode...")
-	fmt.Printf("Version: %s\n", "0.2.0-alpha")
+	fmt.Printf("Version: %s\n", version)
 	fmt.Println("📝 All logs will be written to ~/.xelvra/peerchat.log")
 	fmt.Println()
 

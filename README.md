@@ -125,6 +125,8 @@ For detailed usage, see our [User Guide](docs/USER_GUIDE.md).
 - **Advanced Features**: Proof-of-Work DID, hierarchical reputation, energy optimization
 - **CLI Interface**: Complete command set with interactive chat
 - **System Integration**: Daemon mode, systemd support, comprehensive logging
+- **Event-Driven Architecture**: v0.4.0-alpha introduces centralized event bus system
+- **Advanced Logging**: Structured logging with rotation and component-specific levels
 
 ### 🔌 Epoch 2: API Service (PLANNED)
 - **gRPC Server**: High-performance API with event-driven architecture

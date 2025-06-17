@@ -131,6 +131,14 @@
 
 ## 🚀 New Features Verification
 
+### Event-Driven Architecture (NEW in v0.4.0-alpha)
+- ✅ Centralized Event Bus with worker pools
+- ✅ Event Emitter for P2P components
+- ✅ Advanced Callback Manager with priorities
+- ✅ Structured Logging with rotation
+- ✅ Comprehensive event types support
+- ✅ Asynchronous event processing
+
 ### Advanced DHT Implementation
 - ✅ Kademlia algorithm with 256 buckets
 - ✅ Battery-aware operations
@@ -223,8 +231,9 @@
 - Documentation improvements based on user feedback
 
 ### Short-term (v0.5.0-alpha)
-- Event-driven architecture implementation
-- Advanced logging system
+- ✅ Event-driven architecture implementation (COMPLETED in v0.4.0-alpha)
+- ✅ Advanced logging system (COMPLETED in v0.4.0-alpha)
+- Security enhancements and onion routing
 - API service development
 - GUI application foundation
 

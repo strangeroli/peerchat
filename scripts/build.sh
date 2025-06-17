@@ -46,7 +46,7 @@ fi
 
 # Build API server
 echo -e "${YELLOW}📦 Building API server...${NC}"
-if [ -d "cmd/peerchat-api" ]; then
+if [ -d "cmd/peerchat-api" ] && [ -n "$(find cmd/peerchat-api -name '*.go' 2>/dev/null)" ]; then
     go build -ldflags "${LDFLAGS}" -o ${BIN_DIR}/peerchat-api ./cmd/peerchat-api
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✓ API server built successfully: ${BIN_DIR}/peerchat-api${NC}"
