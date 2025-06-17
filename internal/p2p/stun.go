@@ -10,15 +10,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// STUNClient handles STUN server communication for NAT discovery
-type STUNClient struct {
+// LegacySTUNClient handles STUN server communication for NAT discovery
+type LegacySTUNClient struct {
 	servers []string
 	logger  *logrus.Logger
 }
 
-// NewSTUNClient creates a new STUN client
-func NewSTUNClient(logger *logrus.Logger) *STUNClient {
-	return &STUNClient{
+// NewLegacySTUNClient creates a new STUN client
+func NewLegacySTUNClient(logger *logrus.Logger) *LegacySTUNClient {
+	return &LegacySTUNClient{
 		servers: []string{
 			"stun.l.google.com:19302",
 			"stun1.l.google.com:19302",
@@ -31,7 +31,7 @@ func NewSTUNClient(logger *logrus.Logger) *STUNClient {
 }
 
 // DiscoverNAT discovers NAT type and public IP address
-func (s *STUNClient) DiscoverNAT(ctx context.Context, localPort int) (*NATInfo, error) {
+func (s *LegacySTUNClient) DiscoverNAT(ctx context.Context, localPort int) (*NATInfo, error) {
 	s.logger.Info("Starting NAT discovery via STUN...")
 
 	natInfo := &NATInfo{
@@ -80,7 +80,7 @@ func (s *STUNClient) DiscoverNAT(ctx context.Context, localPort int) (*NATInfo, 
 }
 
 // querySTUNServer queries a single STUN server
-func (s *STUNClient) querySTUNServer(ctx context.Context, server string, localPort int) (string, int, string, error) {
+func (s *LegacySTUNClient) querySTUNServer(ctx context.Context, server string, localPort int) (string, int, string, error) {
 	// Create UDP connection
 	conn, err := net.DialTimeout("udp", server, 5*time.Second)
 	if err != nil {
@@ -150,7 +150,7 @@ func (s *STUNClient) querySTUNServer(ctx context.Context, server string, localPo
 }
 
 // getLocalIP gets the local IP address
-func (s *STUNClient) getLocalIP() (string, error) {
+func (s *LegacySTUNClient) getLocalIP() (string, error) {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
 		return "", err
@@ -167,7 +167,7 @@ func (s *STUNClient) getLocalIP() (string, error) {
 }
 
 // determineNATType determines NAT type based on addresses
-func (s *STUNClient) determineNATType(localIP string, localPort int, publicIP string, publicPort int) string {
+func (s *LegacySTUNClient) determineNATType(localIP string, localPort int, publicIP string, publicPort int) string {
 	// If public IP equals local IP, no NAT
 	if publicIP == localIP {
 		return "none"
@@ -189,7 +189,7 @@ func (s *STUNClient) determineNATType(localIP string, localPort int, publicIP st
 }
 
 // isPrivateIP checks if an IP is in private range
-func (s *STUNClient) isPrivateIP(ip string) bool {
+func (s *LegacySTUNClient) isPrivateIP(ip string) bool {
 	privateRanges := []string{
 		"10.0.0.0/8",
 		"172.16.0.0/12",

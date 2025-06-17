@@ -108,7 +108,7 @@ type PeerChatNode struct {
 	identity       *user.MessengerID
 
 	// Network components
-	stunClient       *STUNClient
+	stunClient       *LegacySTUNClient
 	discoveryManager *DiscoveryManager
 	energyManager    *EnergyManager
 	natInfo          *NATInfo
@@ -226,7 +226,7 @@ func NewPeerChatNode(ctx context.Context, config *NodeConfig) (*PeerChatNode, er
 	}
 
 	// Create network components
-	node.stunClient = NewSTUNClient(logger)
+	node.stunClient = NewLegacySTUNClient(logger)
 	node.discoveryManager = NewDiscoveryManager(h, logger)
 	node.energyManager = NewEnergyManager(nodeCtx, logger)
 

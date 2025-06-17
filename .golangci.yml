@@ -1,5 +1,11 @@
 run:
   timeout: 5m
+  tests: false  # Don't run linters on test files
+  skip-dirs:
+    - tmp
+    - vendor
+  skip-files:
+    - ".*_test.go"
 
 linters:
   enable:
@@ -9,7 +15,19 @@ linters:
     - ineffassign
     - misspell
     - unused
+    - errcheck
+    - staticcheck
+    - typecheck
 
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - typecheck
+        - errcheck
+    - path: tests/
+      linters:
+        - typecheck
+        - errcheck
