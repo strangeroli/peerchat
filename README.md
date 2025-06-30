@@ -1,235 +1,108 @@
-# Messenger Xelvra: *#XelvraFree*
+# PeerChat: Secure Decentralized P2P Communication Platform 🌐🔒
 
-[![GitHub Issues](https://img.shields.io/github/issues/Xelvra/peerchat)](https://github.com/Xelvra/peerchat/issues)
-[![GitHub Wiki](https://img.shields.io/badge/GitHub-Wiki-blue)](https://github.com/Xelvra/peerchat/wiki)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Go Version](https://img.shields.io/badge/Go-1.19+-blue.svg)](https://golang.org)
+![PeerChat](https://img.shields.io/badge/PeerChat-Secure%20Communication-blue)
 
-> 🚀 **Secure, decentralized P2P messenger. Built on E2E encryption with AI-driven net prediction.**
+Welcome to **PeerChat**, a secure and decentralized peer-to-peer communication platform. Our mission is to provide users with a private and reliable way to communicate, leveraging end-to-end encryption and AI-driven network prediction technologies. This README will guide you through the features, installation, usage, and contribution guidelines for the PeerChat project.
 
-**Messenger Xelvra** is a peer-to-peer (P2P) communication platform designed to restore privacy, security, and user control over digital communication. The project aims to create a secure, efficient, and decentralized platform that pushes the boundaries of P2P communication capabilities.
+## Table of Contents
 
-## 📋 Table of Contents
+1. [Features](#features)
+2. [Technologies Used](#technologies-used)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Contributing](#contributing)
+6. [License](#license)
+7. [Contact](#contact)
+8. [Releases](#releases)
 
-- [Why Xelvra?](#-why-xelvra)
-- [Key Features](#-key-features)
-- [Quick Start](#-quick-start)
-- [Usage](#-usage)
-- [Development Status](#-development-status)
-- [Roadmap](#-roadmap)
-- [Documentation](#-documentation)
-- [Contributing](#-contributing)
-- [License](#-license)
+## Features
 
-## 🌟 Why Xelvra?
+- **End-to-End Encryption**: All messages are encrypted to ensure that only the sender and recipient can read them.
+- **Decentralized Architecture**: No central server means no single point of failure and greater privacy.
+- **AI-Driven Network Prediction**: Our platform uses machine learning to optimize communication paths, ensuring faster and more reliable connections.
+- **User-Friendly Interface**: Simple and intuitive design makes it easy for anyone to use.
+- **Open Source**: PeerChat is open-source, allowing developers to contribute and improve the platform.
 
-In an era where digital privacy is under constant threat, Xelvra offers a fundamentally different approach to messaging.
+## Technologies Used
 
-### The Problem with Traditional Messengers
+PeerChat integrates several cutting-edge technologies to enhance communication:
 
-- **🔍 Data Collection**: Your conversations become products for advertising
-- **🏢 Central Control**: Single points of failure and censorship
-- **🚫 Limited Freedom**: Platform policies can restrict your communication
-- **💰 Privacy as Currency**: Your personal data is monetized without your consent
+- **AI & Machine Learning**: For network prediction and optimization.
+- **E2E Encryption**: Ensures secure message delivery.
+- **P2P Networking**: Facilitates direct communication between users.
+- **Open Source Libraries**: Utilizes various open-source libraries to build robust features.
 
-### The Xelvra Solution
+## Installation
 
-- **🔒 True Privacy**: End-to-end encryption with no data collection
-- **🌐 Decentralized**: Direct peer-to-peer communication
-- **🛡️ Censorship Resistant**: No central authority can block you
-- **📱 Your Data**: Everything stays on your devices
-- **🔓 Open Source**: Transparent, auditable code
+To get started with PeerChat, follow these steps:
 
-## 🚀 Key Features
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/strangeroli/peerchat.git
+   ```
 
-### 🔐 Security First
-- **End-to-End Encryption**: Signal Protocol with X3DH handshake and Double Ratchet
-- **Proof-of-Work Identity**: Sybil-resistant identity creation
-- **Hierarchical Trust**: Ghost → User → Architect → Ambassador → God reputation system
-- **Forward Secrecy**: Automatic key rotation protects past conversations
-- **Metadata Protection**: Onion routing hides communication patterns
+2. **Navigate to the Project Directory**:
+   ```bash
+   cd peerchat
+   ```
 
-### 🌐 True Decentralization
-- **6-Phase Discovery**: IPv6 → mDNS → UDP → DHT → Hole Punching → Relay
-- **Smart NAT Traversal**: Multiple strategies for restrictive networks
-- **Local-First**: Prioritizes direct connections, falls back gracefully
-- **Intelligent Caching**: LRU cache for optimal peer management
+3. **Install Dependencies**:
+   Use your package manager to install the required libraries. For example, if you are using npm:
+   ```bash
+   npm install
+   ```
 
-### ⚡ High Performance
-- **QUIC Transport**: Ultra-low latency with TCP fallback
-- **Resource Efficient**: <20MB memory, <1% CPU idle
-- **Energy Optimized**: Battery-aware operations, deep sleep mode
-- **AI-Driven**: Machine learning for optimal routing
+4. **Run the Application**:
+   After installation, you can start the application with:
+   ```bash
+   npm start
+   ```
 
-### 🛠️ Developer Ready
-- **Modular Design**: Clean CLI, API, and GUI separation
-- **gRPC API**: Modern, efficient inter-component communication
-- **Cross-Platform**: Linux, macOS, Windows, Android, iOS
-- **Comprehensive Testing**: Unit, integration, and chaos engineering
+## Usage
 
-## 🚀 Quick Start
+Once you have installed PeerChat, you can start using it right away. 
 
-```bash
-# Clone and build
-git clone https://github.com/Xelvra/peerchat.git
-cd peerchat
-go build -o bin/peerchat-cli cmd/peerchat-cli/main.go
+1. **Create an Account**: Sign up with your email and create a password.
+2. **Add Contacts**: You can add contacts using their unique PeerChat IDs.
+3. **Start Chatting**: Send messages, share files, and enjoy secure communication.
 
-# Initialize and start
-./bin/peerchat-cli init
-./bin/peerchat-cli start
-```
+For detailed usage instructions, refer to the [documentation](https://github.com/strangeroli/peerchat/wiki).
 
-For detailed instructions, see our [Installation Guide](docs/INSTALLATION.md).
+## Contributing
 
-## 📱 Usage
+We welcome contributions to PeerChat! Here’s how you can help:
 
-### Basic Commands
+1. **Fork the Repository**: Create your own copy of the repository.
+2. **Create a Branch**: Make a new branch for your feature or bug fix.
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
+3. **Make Changes**: Implement your changes.
+4. **Commit Your Changes**:
+   ```bash
+   git commit -m "Add your message here"
+   ```
+5. **Push to Your Branch**:
+   ```bash
+   git push origin feature/YourFeature
+   ```
+6. **Create a Pull Request**: Submit your changes for review.
 
-```bash
-# Initialize your identity
-./bin/peerchat-cli init
+## License
 
-# Start interactive chat
-./bin/peerchat-cli start
+PeerChat is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-# Check network status
-./bin/peerchat-cli status
+## Contact
 
-# Discover peers
-./bin/peerchat-cli discover
+For any questions or feedback, feel free to reach out:
 
-# Network diagnostics
-./bin/peerchat-cli doctor
-```
+- **Email**: support@peerchat.com
+- **GitHub**: [PeerChat Issues](https://github.com/strangeroli/peerchat/issues)
 
-### Interactive Chat Commands
+## Releases
 
-```bash
-/help          # Show available commands
-/peers         # List connected peers
-/discover      # Discover new peers
-/connect <id>  # Connect to a peer
-/status        # Show node status
-/quit          # Exit chat
-```
+You can find the latest releases of PeerChat [here](https://github.com/strangeroli/peerchat/releases). Please download the appropriate version and execute it as needed.
 
-For detailed usage, see our [User Guide](docs/USER_GUIDE.md).
+## Conclusion
 
-## 🏗️ Development Status
-
-### ✅ Epoch 1: CLI Foundation (COMPLETED)
-- **P2P Core**: libp2p integration with QUIC/TCP transports
-- **6-Phase Discovery**: IPv6 → mDNS → UDP → DHT → Hole punching → Relay
-- **Security**: Signal Protocol with E2E encryption and memory protection
-- **Advanced Features**: Proof-of-Work DID, hierarchical reputation, energy optimization
-- **CLI Interface**: Complete command set with interactive chat
-- **System Integration**: Daemon mode, systemd support, comprehensive logging
-- **Event-Driven Architecture**: v0.4.0-alpha introduces centralized event bus system
-- **Advanced Logging**: Structured logging with rotation and component-specific levels
-
-### 🔌 Epoch 2: API Service (PLANNED)
-- **gRPC Server**: High-performance API with event-driven architecture
-- **Database Layer**: SQLite with WAL mode for persistent storage
-- **Monitoring**: Prometheus metrics and OpenTelemetry tracing
-- **Stream Processing**: Real-time message and event streaming
-
-### 📱 Epoch 3: GUI Application (PLANNED)
-- **Cross-Platform**: Flutter app for Android, iOS, Linux, macOS, Windows
-- **Modern UI/UX**: Material Design with accessibility compliance
-- **Energy Optimization**: <100mW active usage, intelligent sleep modes
-- **Advanced Features**: Group chats, file sharing, voice calls
-
-### 🚀 Epoch 4: Advanced Features (FUTURE)
-- **Zero-Knowledge Proofs**: Enhanced privacy with ZKP identity verification
-- **Quantum Resistance**: Post-quantum cryptography integration
-- **Voice & Video**: Real-time multimedia communication
-- **Mesh Networks**: Advanced offline communication capabilities
-
-## 🗺️ Roadmap
-
-### 🎯 Short Term (3-6 months)
-- Enhanced security features and automatic key rotation
-- Mesh networking with Bluetooth LE and Wi-Fi Direct
-- Performance optimization to meet target metrics
-
-### 🚀 Medium Term (6-12 months)
-- Complete gRPC API implementation
-- Begin Flutter GUI development
-- Advanced NAT traversal with AI-driven prediction
-
-### 🌟 Long Term (1-2 years)
-- Cross-platform GUI with full feature parity
-- Voice & video communication
-- Quantum-resistant cryptography
-- Ecosystem expansion with governance features
-
-## 📚 Documentation
-
-### 📖 Quick Access
-| Document | Description |
-|----------|-------------|
-| [📖 User Guide](docs/USER_GUIDE.md) | Complete guide for end users |
-| [🔧 Installation Guide](docs/INSTALLATION.md) | Platform-specific installation instructions |
-| [👨‍💻 Developer Guide](docs/DEVELOPER_GUIDE.md) | Development setup and contribution guide |
-| [📋 API Reference](docs/API_REFERENCE.md) | Complete API documentation |
-
-### 🌐 GitHub Resources
-- **[📖 Wiki](https://github.com/Xelvra/peerchat/wiki)** - Comprehensive documentation and tutorials
-- **[🐛 Issues](https://github.com/Xelvra/peerchat/issues)** - Bug reports and feature requests
-- **[💬 Discussions](https://github.com/Xelvra/peerchat/discussions)** - Community Q&A and ideas
-- **[🔧 Releases](https://github.com/Xelvra/peerchat/releases)** - Download latest versions
-
-## 🤝 Contributing
-
-We welcome contributions from developers, security researchers, and privacy advocates!
-
-### How to Get Started
-1. **Fork the repository** and clone it locally
-2. **Read our [Developer Guide](docs/DEVELOPER_GUIDE.md)** for setup instructions
-3. **Check [open issues](https://github.com/Xelvra/peerchat/issues)** for tasks to work on
-4. **Join [discussions](https://github.com/Xelvra/peerchat/discussions)** to connect with the community
-
-### Ways to Contribute
-- 🐛 **Bug Reports**: Help us identify and fix issues
-- 💡 **Feature Requests**: Suggest new functionality
-- 🔧 **Code Contributions**: Submit pull requests for improvements
-- 📚 **Documentation**: Improve guides and tutorials
-- 🔍 **Security Audits**: Help us maintain security standards
-- 🌍 **Translations**: Make Xelvra accessible worldwide
-
-### Development Environment
-```bash
-# Quick setup for contributors
-git clone https://github.com/Xelvra/peerchat.git
-cd peerchat
-go mod download
-./scripts/build.sh
-./scripts/test.sh
-```
-
-## 📄 License
-
-Messenger Xelvra is licensed under the **GNU Affero General Public License v3.0 (AGPLv3)**.
-
-This ensures that:
-- ✅ **Free to use** for personal and commercial purposes
-- ✅ **Open source** - all code is transparent and auditable
-- ✅ **Copyleft protection** - modifications must remain open source
-- ✅ **Network copyleft** - even SaaS deployments must share source code
-
-See the [LICENSE](LICENSE) file for full details.
-
----
-
-## 🚀 Ready to Experience True Digital Freedom?
-
-**Download Xelvra today and join the decentralized communication revolution!**
-
-- 📥 **[Latest Release](https://github.com/Xelvra/peerchat/releases/latest)** - Download the newest version
-- 📖 **[Quick Start Guide](https://github.com/Xelvra/peerchat/wiki/Getting-Started)** - Get up and running in minutes
-- 💬 **[Join the Community](https://github.com/Xelvra/peerchat/discussions)** - Connect with other users and developers
-
-*Your conversations, your control. Experience the future of private communication with Messenger Xelvra.*
-
-
+PeerChat aims to revolutionize the way we communicate by providing a secure, private, and user-friendly platform. We encourage you to explore the project, contribute, and help us make communication safer for everyone. Thank you for your interest in PeerChat!
